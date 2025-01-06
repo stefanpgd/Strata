@@ -29,7 +29,6 @@ void DXPipeline::CompileShaders()
 	// Vertex Shader //
 	ComPtr<ID3DBlob> vertexError;
 	std::wstring vertexShaderPath(description.VertexPath.begin(), description.VertexPath.end());
-
 	D3DCompileFromFile(vertexShaderPath.c_str(), NULL, NULL, "main", "vs_5_1", 0, 0, &vertexShaderBlob, &vertexError);
 
 	if(!vertexError == NULL)
@@ -42,13 +41,18 @@ void DXPipeline::CompileShaders()
 	// Pixel Shader //
 	ComPtr<ID3DBlob> pixelError;
 	std::wstring pixelShaderPath(description.PixelPath.begin(), description.PixelPath.end());
-
 	D3DCompileFromFile(pixelShaderPath.c_str(), NULL, NULL, "main", "ps_5_1", 0, 0, &pixelShaderBlob, &pixelError);
 
 	if(!pixelError == NULL)
 	{
 		std::string buffer = std::string((char*)pixelError->GetBufferPointer());
 		LOG(Log::MessageType::Error, buffer);
+		assert(false && "Compilation of shader failed, read console for errors.");
+	}
+
+	if(vertexShaderBlob == NULL || pixelShaderBlob == NULL)
+	{
+		LOG(Log::MessageType::Error, "Vertex and/or Pixel shader didn't compile, without error(s). Likely a filePath issue!");
 		assert(false && "Compilation of shader failed, read console for errors.");
 	}
 }
