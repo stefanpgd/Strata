@@ -18,7 +18,7 @@ public:
 	Scene(bool enableRayTracingGeometry = false, bool spawnDefaultObjects = true);
 
 	void Update(float deltaTime);
-	void AddModel(const std::string& path);
+	Model* AddModel(const std::string& path);
 
 	const std::vector<Model*>& GetModels();
 public:

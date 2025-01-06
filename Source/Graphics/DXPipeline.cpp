@@ -52,6 +52,7 @@ void DXPipeline::CompileShaders()
 
 	if(vertexShaderBlob == NULL || pixelShaderBlob == NULL)
 	{
+		// TODO: Could consider checking if the filepath/directory actually exist, but likely overkill for this framework.
 		LOG(Log::MessageType::Error, "Vertex and/or Pixel shader didn't compile, without error(s). Likely a filePath issue!");
 		assert(false && "Compilation of shader failed, read console for errors.");
 	}

@@ -21,9 +21,13 @@ void Scene::Update(float deltaTime)
 	Camera->Update();
 }
 
-void Scene::AddModel(const std::string& path)
+Model* Scene::AddModel(const std::string& path)
 {
-	models.push_back(new Model(path, enableRayTracingGeometry));
+	// TODO: Add a model loading manager similar to the TextureManager
+	Model* newModel = new Model(path, enableRayTracingGeometry);
+	models.push_back(newModel);
+
+	return newModel;
 }
 
 const std::vector<Model*>& Scene::GetModels()
