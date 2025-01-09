@@ -15,18 +15,18 @@
 StrataProject::StrataProject()
 {
 	scene = new Scene(false, false);
-	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
-
+	scene->Camera->Position = glm::vec3(0.0f, 0.5f, 2.5f);
+	
 	Model* cube = scene->AddModel("Assets/Models/Prototype/proto_cube_01.gltf");
 	cube->transform.Position = glm::vec3(0.0f, 0.5f, 0.0f);
+	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
 
-	scene->Camera->Position = glm::vec3(0.0f, 0.5f, 1.0f);
 	modelRenderStage = new ModelRenderStage(scene);
 }
 
 void StrataProject::Update(float deltaTime)
 {
-
+	scene->Update(deltaTime);
 }
 
 void StrataProject::Render(ComPtr<ID3D12GraphicsCommandList4> commandList)

@@ -1,12 +1,18 @@
 #pragma once
 #include "Framework/Mathematics.h"
 
+enum CameraMode
+{
+	Freeform,
+	LookAt
+};
+
 class Camera
 {
 public: 
 	Camera(glm::vec3 position = glm::vec3(0.0f, 1.0f, 4.0f));
 
-	void Update();
+	void Update(float deltaTime);
 
 	void UpdateViewMatrix();
 	void ResizeProjectionMatrix(int windowWidth, int windowHeight);
@@ -19,6 +25,7 @@ public:
 	const glm::mat4& GetViewProjectionMatrix();
 
 public:
+	CameraMode Mode;
 	glm::vec3 Position;
 
 private:
@@ -33,4 +40,9 @@ private:
 	float nearClip = 0.01f;
 	float farClip = 1000.0f;
 	float aspectRatio;
+
+	// Testing attention please //
+	float scrollVelocity = 0.0f;
+	float minimumZoomSpacing = 1.5f;
+	float zoomSpeed = 4.0f;
 };

@@ -18,7 +18,7 @@ Scene::Scene(bool enableRayTracingGeometry, bool spawnDefaultObjects)
 
 void Scene::Update(float deltaTime)
 {
-	Camera->Update();
+	Camera->Update(deltaTime);
 }
 
 Model* Scene::AddModel(const std::string& path)

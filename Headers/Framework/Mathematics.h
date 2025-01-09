@@ -11,3 +11,8 @@
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
+
+inline float Lerp(float a, float b, float t)
+{
+	return (1.0f - t) * a + b * t;
+}

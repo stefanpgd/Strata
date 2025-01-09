@@ -73,3 +73,8 @@ int Input::GetMouseVelocityY()
 {
 	return ImGui::GetIO().MouseDelta.y;
 }
+
+float Input::GetScollVelocity()
+{
+	return ImGui::GetIO().MouseWheel;
+}

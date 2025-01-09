@@ -58,6 +58,7 @@ public:
 	static int GetMouseY();
 	static int GetMouseVelocityX();
 	static int GetMouseVelocityY();
+	static float GetScollVelocity();
 
 private:
 	static int frameCount;
