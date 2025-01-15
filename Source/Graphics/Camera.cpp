@@ -12,17 +12,35 @@ Camera::Camera(glm::vec3 position) : Position(position)
 
 void Camera::Update(float deltaTime)
 {
+	glm::vec3 target = glm::vec3(0.0f, 0.25f, 0.0f);
+
+	if(Input::GetMouseButton(MouseCode::Right))
+	{
+		lookAtYaw += Input::GetMouseVelocityX() * deltaTime * 25.0f;
+		lookAtPitch += Input::GetMouseVelocityY() * deltaTime * 25.0f;
+	}
+
+	float yawRadians = glm::radians(lookAtYaw);
+	float pitchRadians = glm::radians(lookAtPitch);
+
+	glm::vec3 spherical;
+	spherical.x = cos(yawRadians) * cos(pitchRadians);
+	spherical.y = sin(pitchRadians);
+	spherical.z = sin(yawRadians) * cos(pitchRadians);
+
+	spherical = glm::normalize(spherical) * scrollDistance;
+	Position = spherical;
+
 	scrollVelocity += Input::GetScollVelocity();
-	scrollVelocity = Lerp(scrollVelocity, 0.0f, 0.003f);
-
-	Position.z += zoomSpeed * scrollVelocity * deltaTime;
-
-	glm::vec3 target = glm::vec3(0.0f, 0.5f, 0.0f);
+	scrollVelocity = Lerp(scrollVelocity, 0.0f, 0.004f);
+	
+	scrollDistance += zoomSpeed * scrollVelocity * deltaTime;
+	
 	float distance = glm::length(target - Position);
-
+	
 	if(distance < minimumZoomSpacing)
 	{
-		Position.z = minimumZoomSpacing;
+		scrollDistance = minimumZoomSpacing + 0.01;
 		scrollVelocity = 0.0f;
 	}
 

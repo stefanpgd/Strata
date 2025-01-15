@@ -45,4 +45,8 @@ private:
 	float scrollVelocity = 0.0f;
 	float minimumZoomSpacing = 1.5f;
 	float zoomSpeed = 4.0f;
+	float scrollDistance = 2.0f;
+
+	float lookAtYaw = 0.0f;
+	float lookAtPitch = 0.0f;
 };
