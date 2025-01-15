@@ -3,6 +3,9 @@
 #include "Graphics/DXAccess.h"
 #include "Graphics/Window.h"
 #include "Framework/Mathematics.h"
+#include "Utilities/Logger.h"
+
+#include <imgui.h>
 
 Camera::Camera(glm::vec3 position) : Position(position)
 {
@@ -12,7 +15,7 @@ Camera::Camera(glm::vec3 position) : Position(position)
 
 void Camera::Update(float deltaTime)
 {
-	glm::vec3 target = glm::vec3(0.0f, 0.25f, 0.0f);
+	glm::vec3 target = glm::vec3(0.0f, 0.5f, 0.0f);
 
 	if(Input::GetMouseButton(MouseCode::Right))
 	{
@@ -36,11 +39,9 @@ void Camera::Update(float deltaTime)
 	
 	scrollDistance += zoomSpeed * scrollVelocity * deltaTime;
 	
-	float distance = glm::length(target - Position);
-	
-	if(distance < minimumZoomSpacing)
+	if(scrollDistance < minimumZoomSpacing)
 	{
-		scrollDistance = minimumZoomSpacing + 0.01;
+		scrollDistance = minimumZoomSpacing;
 		scrollVelocity = 0.0f;
 	}
 
