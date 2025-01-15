@@ -47,6 +47,10 @@ private:
 	float zoomSpeed = 4.0f;
 	float scrollDistance = 2.0f;
 
+	float panSpeed = 4.0f;
 	float lookAtYaw = 0.0f;
 	float lookAtPitch = 0.0f;
+
+	float yawVelocity = 0.0f;
+	float pitchVelocity = 0.0f;
 };

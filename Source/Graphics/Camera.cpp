@@ -19,9 +19,17 @@ void Camera::Update(float deltaTime)
 
 	if(Input::GetMouseButton(MouseCode::Right))
 	{
-		lookAtYaw += Input::GetMouseVelocityX() * deltaTime * 25.0f;
-		lookAtPitch += Input::GetMouseVelocityY() * deltaTime * 25.0f;
+		yawVelocity += Input::GetMouseVelocityX();
+		pitchVelocity += Input::GetMouseVelocityY();
 	}
+
+	yawVelocity = Lerp(yawVelocity, 0.0f, deltaTime * 6.0);
+	pitchVelocity = Lerp(pitchVelocity, 0.0f, deltaTime * 6.0);
+
+	lookAtYaw += panSpeed * yawVelocity * deltaTime;
+	lookAtPitch += panSpeed * pitchVelocity * deltaTime;
+
+	lookAtPitch = glm::clamp(lookAtPitch, -89.0f, 89.0f);
 
 	float yawRadians = glm::radians(lookAtYaw);
 	float pitchRadians = glm::radians(lookAtPitch);
@@ -32,10 +40,10 @@ void Camera::Update(float deltaTime)
 	spherical.z = sin(yawRadians) * cos(pitchRadians);
 
 	spherical = glm::normalize(spherical) * scrollDistance;
-	Position = spherical;
+	Position = spherical + target;
 
 	scrollVelocity += Input::GetScollVelocity();
-	scrollVelocity = Lerp(scrollVelocity, 0.0f, 0.004f);
+	scrollVelocity = Lerp(scrollVelocity, 0.0f, deltaTime * 6.0);
 	
 	scrollDistance += zoomSpeed * scrollVelocity * deltaTime;
 	
