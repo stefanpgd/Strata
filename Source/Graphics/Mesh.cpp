@@ -94,9 +94,9 @@ void Mesh::UploadGeometryBuffers()
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
 	// 3.Execute the copying on the command queue & wait until it's done // 
-	copyCommands->ExecuteCommandList(DXAccess::GetCurrentBackBufferIndex());
+	copyCommands->ExecuteCommandList(DXAccess::GetCurrentScreenBufferIndex());
 	copyCommands->Signal();
-	copyCommands->WaitForFenceValue(DXAccess::GetCurrentBackBufferIndex());
+	copyCommands->WaitForFenceValue(DXAccess::GetCurrentScreenBufferIndex());
 
 	// 4. Clear CPU data // 
 	verticesCount = vertices.size();

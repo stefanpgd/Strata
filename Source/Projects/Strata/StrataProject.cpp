@@ -5,15 +5,29 @@
 #include "Graphics/Camera.h" // TODO: consider if this should be part of Framework or Graphics
 #include "Graphics/Model.h"
 
+
 /// <summary>
-/// Goal 1: A plane, a cube on it, and a focused camera that can pan around with dragging the mouse
-/// Goal 2: Textured Cube, with mipmapping
-/// Goal 3: Post Processing - Vignette & Bloom(?)
+/// Goal 1 [x]: A plane, a cube on it, and a focused camera that can pan around with dragging the mouse
+/// Goal 2 [ ]: Post Processing - Vignette & Bloom(?)
+/// Goal 3 [ ]: Textured Cube, with mipmapping
+/// Goal 4: Some sort of scene serialization (?)
 /// .. to be determined ..
 /// </summary>
+/// 
+/// To do post processing I really have to properly figure out the render target stuff.
+/// This might also mean rewriting elements of the Window Class
+/// 
+/// To do - Read into mip-maps, together with things such as the subresource stuff to properly access it in HLSL
+/// Likely start with Jeremiah's stuff and decipher it..
+
+// Random note, Jeremiah seems to have made a resource state tracker. Might be cool to investigate
+
+/// For post processing I will first need: 
+// To do - Go through the entire code base, find some things that could already use improvements, maybe pair them with some of the goals
 
 StrataProject::StrataProject()
 {
+
 	scene = new Scene(false, false);
 	scene->Camera->Position = glm::vec3(0.0f, 0.5f, 2.5f);
 	

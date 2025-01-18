@@ -17,17 +17,10 @@ public:
 	void Present();
 	void Resize();
 
-	unsigned int GetCurrentBackBufferIndex();
+	unsigned int GetCurrentScreenBufferIndex();
 
-	// Render Targets are back buffers used to draw the scene into //
-	ComPtr<ID3D12Resource> GetCurrentRenderBuffer();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE GetCurrentRenderRTV();
-	CD3DX12_GPU_DESCRIPTOR_HANDLE GetCurrentRenderSRV();
-
-	// Screen Buffers are back-buffers of the Swap Chain //
 	ComPtr<ID3D12Resource> GetCurrentScreenBuffer();
 	CD3DX12_CPU_DESCRIPTOR_HANDLE GetCurrentScreenRTV();
-
 	CD3DX12_CPU_DESCRIPTOR_HANDLE GetDepthDSV();
 
 	HWND GetHWND();
@@ -40,15 +33,11 @@ private:
 	void SetupWindow();
 	void CreateSwapChain();
 
-	void UpdateRenderBuffers();
 	void UpdateScreenBuffers();
 	void UpdateDepthBuffer();
 
 public:
 	static const unsigned int BackBufferCount = 3;
-
-	// PLACEHOLDER //
-	// Attempt at using backbuffers as textures //
 
 private:
 	// Window Settings //
@@ -61,11 +50,6 @@ private:
 	bool vSync = false;
 	bool tearingSupported = true;
 	bool fullscreen = false;
-
-	// Render Buffers //
-	Texture* renderBuffers[BackBufferCount];
-	int renderBufferRTVs[BackBufferCount];
-	int renderBufferSRVs[BackBufferCount];
 
 	// Screen Buffers //
 	ComPtr<IDXGISwapChain4> swapChain;

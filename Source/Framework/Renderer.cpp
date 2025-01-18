@@ -51,9 +51,12 @@ Renderer::Renderer(const std::wstring& applicationName, unsigned int windowWidth
 	InitializeImGui();
 }
 
+// What should Render be?
+// Technically it should just prepare a render call, likely by just clearing out the render target, which is the screen buffer
+// Then afterwards, ASSUME that the project has written to it. That in mind, Window needs a refactor.
 void Renderer::Render(Project* project)
 {
-	unsigned int backBufferIndex = window->GetCurrentBackBufferIndex();
+	unsigned int backBufferIndex = window->GetCurrentScreenBufferIndex();
 	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
 	ID3D12DescriptorHeap* heaps[] = { CBVHeap->GetAddress() };
 
@@ -75,7 +78,7 @@ void Renderer::Render(Project* project)
 
 	directCommands->ExecuteCommandList(backBufferIndex);
 	window->Present();
-	directCommands->WaitForFenceValue(window->GetCurrentBackBufferIndex());
+	directCommands->WaitForFenceValue(window->GetCurrentScreenBufferIndex());
 }
 
 void Renderer::Resize()
@@ -132,14 +135,14 @@ DXCommands* DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE type)
 	return nullptr;
 }
 
-unsigned int DXAccess::GetCurrentBackBufferIndex()
+unsigned int DXAccess::GetCurrentScreenBufferIndex()
 {
 	if(!window)
 	{
 		assert(false && "Window hasn't been initialized yet, can't retrieve back buffer index");
 	}
 
-	return window->GetCurrentBackBufferIndex();
+	return window->GetCurrentScreenBufferIndex();
 }
 
 Texture* DXAccess::GetDefaultTexture()

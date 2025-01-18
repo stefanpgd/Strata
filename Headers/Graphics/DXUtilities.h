@@ -137,14 +137,14 @@ inline void UpdateInFlightCBV(ComPtr<ID3D12Resource>& destinationResource, unsig
 	directCommands->Flush();
 
 	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
-	directCommands->ResetCommandList(DXAccess::GetCurrentBackBufferIndex());
+	directCommands->ResetCommandList(DXAccess::GetCurrentScreenBufferIndex());
 
 	ComPtr<ID3D12Resource> intermediateResource;
 	UpdateBufferResource(commandList, &destinationResource, &intermediateResource, numberOfElements, elementSize, bufferData, flags);
 
-	directCommands->ExecuteCommandList(DXAccess::GetCurrentBackBufferIndex());
+	directCommands->ExecuteCommandList(DXAccess::GetCurrentScreenBufferIndex());
 	directCommands->Signal();
-	directCommands->WaitForFenceValue(DXAccess::GetCurrentBackBufferIndex());
+	directCommands->WaitForFenceValue(DXAccess::GetCurrentScreenBufferIndex());
 
 	ComPtr<ID3D12Device5> device = DXAccess::GetDevice();
 
