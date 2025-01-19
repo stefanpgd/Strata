@@ -9,6 +9,14 @@
 class DXDescriptorHeap;
 class Texture;
 
+/// <summary>
+/// This class is responsible for setting up and running a Window we can draw to.
+/// Part of this is creating 'ScreenBuffers', which are our back buffers for our swap chain.
+/// 
+/// How this relates to our renderer is that, no matter what. The screen's buffer will always be cleared
+/// and presented during a given frame. So, the screen buffer is always the final representation of our render.
+/// So make sure this ends up being used as the output.  
+/// </summary>
 class Window
 {
 public:

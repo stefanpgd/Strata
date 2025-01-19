@@ -5,12 +5,14 @@
 #include "Graphics/Camera.h" // TODO: consider if this should be part of Framework or Graphics
 #include "Graphics/Model.h"
 
-
 /// <summary>
 /// Goal 1 [x]: A plane, a cube on it, and a focused camera that can pan around with dragging the mouse
 /// Goal 2 [ ]: Post Processing - Vignette & Bloom(?)
 /// Goal 3 [ ]: Textured Cube, with mipmapping
 /// Goal 4: Some sort of scene serialization (?)
+/// 
+/// Optional goals to work through
+/// - Proper implementation of resizing for all base systems?
 /// .. to be determined ..
 /// </summary>
 /// 
@@ -27,7 +29,6 @@
 
 StrataProject::StrataProject()
 {
-
 	scene = new Scene(false, false);
 	scene->Camera->Position = glm::vec3(0.0f, 0.5f, 2.5f);
 	

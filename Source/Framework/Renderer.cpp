@@ -73,6 +73,8 @@ void Renderer::Render(Project* project)
 
 	project->Render(commandList);
 
+	BindRenderTarget(window, &rtvHandle);
+
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
 	TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 

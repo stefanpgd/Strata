@@ -187,6 +187,17 @@ inline void BindAndClearRenderTarget(Window* window, CD3DX12_CPU_DESCRIPTOR_HAND
 	commandList->OMSetRenderTargets(1, renderTarget, FALSE, depthStencil);
 }
 
+inline void BindRenderTarget(Window* window, CD3DX12_CPU_DESCRIPTOR_HANDLE* renderTarget,
+	CD3DX12_CPU_DESCRIPTOR_HANDLE* depthStencil = nullptr)
+{
+	DXCommands* directCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
+
+	commandList->RSSetViewports(1, &window->GetViewport());
+	commandList->RSSetScissorRects(1, &window->GetScissorRect());
+	commandList->OMSetRenderTargets(1, renderTarget, FALSE, depthStencil);
+}
+
 inline void AllocateUploadResource(ComPtr<ID3D12Resource>& resource, unsigned int bufferSizeInBytes,
 	D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
 {

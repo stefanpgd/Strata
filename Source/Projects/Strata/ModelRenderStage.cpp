@@ -7,7 +7,10 @@
 #include "Framework/Scene.h"
 #include "Framework/Mathematics.h"
 #include "Utilities/Logger.h"
+#include "Graphics/DXUtilities.h"
 #include <assert.h>
+
+#include "Graphics/RenderTarget.h"
 
 ModelRenderStage::ModelRenderStage(Scene* scene) : activeScene(scene)
 {
@@ -18,12 +21,19 @@ ModelRenderStage::ModelRenderStage(Scene* scene) : activeScene(scene)
 		return;
 	}
 
+	// TODO: Knowing how common this is, just outright make WindowWidth & Height into DXAcccess
+	renderTarget = new RenderTarget(DXAccess::GetWindow()->GetWindowWidth(), DXAccess::GetWindow()->GetWindowHeight());
+
 	InitializePipeline();
 }
 
 void ModelRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
 	DXDescriptorHeap* SRVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	CD3DX12_CPU_DESCRIPTOR_HANDLE renderRTV = renderTarget->GetRTV();
+	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle = DXAccess::GetWindow()->GetDepthDSV();
+
+	BindRenderTarget(DXAccess::GetWindow(), &renderRTV, &dsvHandle);
 
 	commandList->SetGraphicsRootSignature(rootSignature->GetAddress());
 	commandList->SetPipelineState(renderPipeline->GetAddress());

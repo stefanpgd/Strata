@@ -5,6 +5,7 @@
 class Scene;
 class DXRootSignatre;
 class DXPipeline;
+class RenderTarget;
 
 class ModelRenderStage : public RenderStage
 {
@@ -18,6 +19,7 @@ private:
 	
 private:
 	Scene* activeScene;
+	RenderTarget* renderTarget;
 
 	DXRootSignature* rootSignature;
 	DXPipeline* renderPipeline;
