@@ -38,7 +38,7 @@ void DepthBuffer::Resize(unsigned int width, unsigned int height)
 		width, height, 1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 
 	ThrowIfFailed(device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE,
-		&depthDescription, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(&depthBuffer)));
+		&depthDescription, D3D12_RESOURCE_STATE_DEPTH_WRITE, &clearValue, IID_PPV_ARGS(&depthBuffer)));
 
 	// 3. Create Depth-Stencil view //
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;

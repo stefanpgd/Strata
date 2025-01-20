@@ -1,17 +1,86 @@
 #include "Graphics/RenderTarget.h"
 #include "Graphics/DXAccess.h"
 #include "Graphics/DXDescriptorHeap.h"
+#include "Graphics/DXUtilities.h"
+#include "Graphics/DepthBuffer.h"
 
-RenderTarget::RenderTarget(unsigned int width, unsigned int height) : width(width), height(height)
+RenderTarget::RenderTarget(unsigned int width, unsigned int height, bool useDepthBuffer) 
+	: width(width), height(height), useDepthBuffer(useDepthBuffer)
 {
-	// todo, add parameter to get depth buffer from render target to?
 	// todo, add bind function
-	
 	// todo replace with constructor parameter
+
 	format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	// Default/initial state
+	resourceState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
 	AllocateResource();
 	CreateDescriptors();
+
+	if(useDepthBuffer)
+	{
+		depthBuffer = new DepthBuffer(this->width, this->height);
+	}
+}
+
+void RenderTarget::Clear()
+{
+	const float renderTargetColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+	DXCommands* directCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
+	commandList->ClearRenderTargetView(GetRTV(), renderTargetColor, 0, nullptr);
+
+	if(useDepthBuffer)
+	{
+		commandList->ClearDepthStencilView(depthBuffer->GetDSV(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	}
+}
+
+void RenderTarget::Bind()
+{
+	// TODO: Slowly noticing more that I need a ResourceState tracker.
+	// slowly just continue to use this, then once enough examples exist make a system
+	if(resourceState != D3D12_RESOURCE_STATE_RENDER_TARGET)
+	{
+		TransitionResource(renderTarget.Get(), resourceState, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		resourceState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	}
+
+	DXCommands* directCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetRTV();
+
+	if(useDepthBuffer)
+	{
+		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle = depthBuffer->GetDSV();
+		commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
+	}
+	else
+	{
+		commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+	}
+}
+
+/// <summary>
+/// Copies the current render on this render target directly on the 'Active' screen buffer.
+/// It's assumed that screen buffer is always in 'RENDER_TARGET' mode, and not yet present.
+/// Since this copying happens before the UI/ImGui pass.
+/// </summary>
+void RenderTarget::CopyToScreenBuffer()
+{
+	DXCommands* directCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
+	ComPtr<ID3D12Resource> screenBuffer = DXAccess::GetWindow()->GetCurrentScreenBuffer();
+
+	TransitionResource(renderTarget.Get(), resourceState, D3D12_RESOURCE_STATE_COPY_SOURCE);
+	TransitionResource(screenBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
+
+	commandList->CopyResource(screenBuffer.Get(), renderTarget.Get());
+
+	TransitionResource(renderTarget.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, resourceState);
+	TransitionResource(screenBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void RenderTarget::AllocateResource()
@@ -30,7 +99,7 @@ void RenderTarget::AllocateResource()
 
 	CD3DX12_HEAP_PROPERTIES defaultHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	DXAccess::GetDevice()->CreateCommittedResource(&defaultHeap, D3D12_HEAP_FLAG_NONE, &renderTargetDescription,
-		D3D12_RESOURCE_STATE_RENDER_TARGET, nullptr, IID_PPV_ARGS(&renderTarget));
+		resourceState, nullptr, IID_PPV_ARGS(&renderTarget));
 }
 
 void RenderTarget::CreateDescriptors()

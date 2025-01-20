@@ -22,7 +22,9 @@ ModelRenderStage::ModelRenderStage(Scene* scene) : activeScene(scene)
 	}
 
 	// TODO: Knowing how common this is, just outright make WindowWidth & Height into DXAcccess
-	renderTarget = new RenderTarget(DXAccess::GetWindow()->GetWindowWidth(), DXAccess::GetWindow()->GetWindowHeight());
+	unsigned int windowWidth = DXAccess::GetWindow()->GetWindowWidth();
+	unsigned int windowHeight = DXAccess::GetWindow()->GetWindowHeight();
+	renderTarget = new RenderTarget(windowWidth, windowHeight, true);
 
 	InitializePipeline();
 }
@@ -30,10 +32,9 @@ ModelRenderStage::ModelRenderStage(Scene* scene) : activeScene(scene)
 void ModelRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
 	DXDescriptorHeap* SRVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	CD3DX12_CPU_DESCRIPTOR_HANDLE renderRTV = renderTarget->GetRTV();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle = DXAccess::GetWindow()->GetDepthDSV();
 
-	BindRenderTarget(DXAccess::GetWindow(), &renderRTV, &dsvHandle);
+	renderTarget->Bind();
+	renderTarget->Clear();
 
 	commandList->SetGraphicsRootSignature(rootSignature->GetAddress());
 	commandList->SetPipelineState(renderPipeline->GetAddress());
@@ -57,6 +58,8 @@ void ModelRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandLis
 			commandList->DrawIndexedInstanced(mesh->GetIndicesCount(), 1, 0, 0, 0);
 		}
 	}
+
+	renderTarget->CopyToScreenBuffer();
 }
 
 void ModelRenderStage::InitializePipeline()
