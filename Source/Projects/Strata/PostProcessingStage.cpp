@@ -3,10 +3,26 @@
 #include "Graphics/RenderTarget.h"
 #include "Graphics/DXUtilities.h"
 
+// TEMP //
+#include "Utilities/EditorElements.h"
+#include <imgui.h>
+
 PostProcessingStage::PostProcessingStage()
 {
 	postProcessor = new PostProcessor();
 	postProcessingTarget = new RenderTarget(DXAccess::GetWindowWidth(), DXAccess::GetWindowHeight());
+}
+
+void PostProcessingStage::Update(float deltaTime)
+{
+	// TODO: temporarily fine for the gimmick but move out when relevant. 
+	ImGui::Begin("Render Targets");
+	float aspectRatio = float(DXAccess::GetWindowWidth()) / float(DXAccess::GetWindowHeight());
+	EditorRenderTargetHighlight(postProcessingTarget, "Post Processor View", 250, aspectRatio);
+
+	ImGui::End();
+
+	postProcessor->Update(deltaTime);
 }
 
 void PostProcessingStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList)

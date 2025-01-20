@@ -44,6 +44,7 @@ StrataProject::StrataProject()
 void StrataProject::Update(float deltaTime)
 {
 	scene->Update(deltaTime);
+	postProcessingStage->Update(deltaTime);
 }
 
 void StrataProject::Render(ComPtr<ID3D12GraphicsCommandList4> commandList)

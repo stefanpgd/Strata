@@ -10,6 +10,7 @@ class PostProcessor
 public:
 	PostProcessor();
 
+	void Update(float deltaTime);
 	void Execute(ComPtr<ID3D12GraphicsCommandList4> commandList);
 
 private:

@@ -6,6 +6,8 @@
 // TEMP //
 #include "Graphics/DXRootSignature.h"
 #include "Graphics/DXPipeline.h"
+#include <imgui.h>
+#include "Utilities/EditorElements.h"
 
 DXRootSignature* root;
 DXPipeline* pipeline;
@@ -29,6 +31,16 @@ PostProcessor::PostProcessor()
 	pipelineDescription.PixelPath = "Source/Shaders/postprocess_test.pixel.hlsl";
 	
 	pipeline = new DXPipeline(pipelineDescription);
+}
+
+void PostProcessor::Update(float deltaTime)
+{
+	ImGui::Begin("Render Targets");
+
+	float aspectRatio = float(DXAccess::GetWindowWidth()) / float(DXAccess::GetWindowHeight());
+	EditorRenderTargetHighlight(sceneOutput, "Scene View", 250, aspectRatio);
+
+	ImGui::End();
 }
 
 void PostProcessor::Execute(ComPtr<ID3D12GraphicsCommandList4> commandList)
