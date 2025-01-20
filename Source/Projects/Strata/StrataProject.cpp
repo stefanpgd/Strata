@@ -48,6 +48,6 @@ void StrataProject::Update(float deltaTime)
 
 void StrataProject::Render(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
-	//modelRenderStage->RecordStage(commandList);
+	modelRenderStage->RecordStage(commandList);
 	postProcessingStage->RecordStage(commandList);
 }

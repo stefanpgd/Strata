@@ -78,6 +78,25 @@ void RenderTarget::CopyToScreenBuffer()
 	TransitionResource(screenBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
+/// <summary>
+/// Copies the current screen buffer into this render target. 
+/// Relevant whenever you might want the output for the scene for something like a post processing technique.
+/// </summary>
+void RenderTarget::CopyFromScreenBuffer()
+{
+	DXCommands* directCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
+	ComPtr<ID3D12Resource> screenBuffer = DXAccess::GetWindow()->GetCurrentScreenBuffer();
+
+	TransitionResource(renderTarget.Get(), resourceState, D3D12_RESOURCE_STATE_COPY_DEST);
+	TransitionResource(screenBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+	commandList->CopyResource(renderTarget.Get(), screenBuffer.Get());
+
+	TransitionResource(renderTarget.Get(), D3D12_RESOURCE_STATE_COPY_DEST, resourceState);
+	TransitionResource(screenBuffer.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+}
+
 void RenderTarget::AllocateResource()
 {
 	D3D12_RESOURCE_DESC renderTargetDescription = {};

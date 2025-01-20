@@ -12,7 +12,9 @@ public:
 
 	void Clear();
 	void Bind();
+
 	void CopyToScreenBuffer();
+	void CopyFromScreenBuffer();
 
 	ComPtr<ID3D12Resource> GetResource();
 	CD3DX12_CPU_DESCRIPTOR_HANDLE GetRTV();
