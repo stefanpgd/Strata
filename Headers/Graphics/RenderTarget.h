@@ -12,12 +12,15 @@ public:
 
 	void Clear();
 	void Bind();
+	void PrepareAsShaderResource();
 
 	void CopyToScreenBuffer();
 	void CopyFromScreenBuffer();
 
 	ComPtr<ID3D12Resource> GetResource();
 	CD3DX12_CPU_DESCRIPTOR_HANDLE GetRTV();
+	CD3DX12_GPU_DESCRIPTOR_HANDLE GetSRV();
+	CD3DX12_GPU_DESCRIPTOR_HANDLE GetUAV();
 
 private:
 	void AllocateResource();

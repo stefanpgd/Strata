@@ -60,6 +60,8 @@ void ModelRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandLis
 
 void ModelRenderStage::InitializePipeline()
 {
+	// TODO: Expanding the root signature functionality, similar to the creation of as DXShaderBindingTable
+	// Might be very effective at reducing the time of making these pipelines 
 	CD3DX12_DESCRIPTOR_RANGE1 diffuseTexture[1];
 	diffuseTexture[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 

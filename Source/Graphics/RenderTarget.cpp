@@ -22,7 +22,7 @@ RenderTarget::RenderTarget(unsigned int width, unsigned int height, DXGI_FORMAT 
 void RenderTarget::Clear()
 {
 	const float renderTargetColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-
+	
 	DXCommands* directCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_DIRECT);
 	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
 	commandList->ClearRenderTargetView(GetRTV(), renderTargetColor, 0, nullptr);
@@ -55,6 +55,15 @@ void RenderTarget::Bind()
 	else
 	{
 		commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+	}
+}
+
+void RenderTarget::PrepareAsShaderResource()
+{
+	if(resourceState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)
+	{
+		TransitionResource(renderTarget.Get(), resourceState, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		resourceState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	}
 }
 
@@ -149,6 +158,7 @@ void RenderTarget::CreateDescriptors()
 	device->CreateRenderTargetView(renderTarget.Get(), &rtvDesc, RTVHeap->GetCPUHandleAt(rtvIndex));
 }
 
+#pragma region
 ComPtr<ID3D12Resource> RenderTarget::GetResource()
 {
 	return renderTarget;
@@ -158,3 +168,14 @@ CD3DX12_CPU_DESCRIPTOR_HANDLE RenderTarget::GetRTV()
 {
 	return DXAccess::GetCPUDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, rtvIndex);
 }
+
+CD3DX12_GPU_DESCRIPTOR_HANDLE RenderTarget::GetSRV()
+{
+	return DXAccess::GetGPUDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, srvIndex);
+}
+
+CD3DX12_GPU_DESCRIPTOR_HANDLE RenderTarget::GetUAV()
+{
+	return DXAccess::GetGPUDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, uavIndex);
+}
+#pragma endregion Getters

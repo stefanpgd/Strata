@@ -27,10 +27,9 @@ PostProcessingStage::PostProcessingStage()
 
 void PostProcessingStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
-	postProcessingTarget->Bind();
 	postProcessingTarget->Clear();
+	postProcessingTarget->Bind();
 
-	// if postEnabled.. etc.
 	postProcessor->Execute(commandList);
 
 	postProcessingTarget->CopyToScreenBuffer();

@@ -15,6 +15,7 @@ public:
 
 private:
 	Scene* scene;
+
 	ModelRenderStage* modelRenderStage;
 	PostProcessingStage* postProcessingStage;
 };

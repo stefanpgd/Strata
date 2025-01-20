@@ -13,5 +13,6 @@ public:
 
 private:
 	PostProcessor* postProcessor;
-	RenderTarget* postProcessingTarget;
+	
+	RenderTarget* postProcessingTarget; 
 };

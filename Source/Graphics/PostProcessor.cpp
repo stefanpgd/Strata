@@ -1,5 +1,7 @@
 #include "Graphics/PostProcessor.h"
 #include "Graphics/Mesh.h"
+#include "Graphics/RenderTarget.h"
+#include "Graphics/DXUtilities.h"
 
 // TEMP //
 #include "Graphics/DXRootSignature.h"
@@ -11,8 +13,15 @@ DXPipeline* pipeline;
 PostProcessor::PostProcessor()
 {
 	InitializeScreenSquad();
+	sceneOutput = new RenderTarget(DXAccess::GetWindowWidth(), DXAccess::GetWindowHeight());
 
-	root = new DXRootSignature(nullptr, 0, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	CD3DX12_DESCRIPTOR_RANGE1 diffuseTexture[1];
+	diffuseTexture[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	
+	CD3DX12_ROOT_PARAMETER1 rootParameters[1];
+	rootParameters[0].InitAsDescriptorTable(1, &diffuseTexture[0], D3D12_SHADER_VISIBILITY_PIXEL); // Lighting data
+
+	root = new DXRootSignature(rootParameters, _countof(rootParameters), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	DXPipelineDescription pipelineDescription;
 	pipelineDescription.RootSignature = root;
@@ -24,13 +33,20 @@ PostProcessor::PostProcessor()
 
 void PostProcessor::Execute(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
+	// First copy the current output of the scene, so that it can be used for our post process passes. 
+	sceneOutput->CopyFromScreenBuffer();
+	sceneOutput->PrepareAsShaderResource();
+
 	commandList->SetGraphicsRootSignature(root->GetAddress());
 	commandList->SetPipelineState(pipeline->GetAddress());
 
 	commandList->IASetVertexBuffers(0, 1, &screenQuad->GetVertexBufferView());
 	commandList->IASetIndexBuffer(&screenQuad->GetIndexBufferView());
 
+	commandList->SetGraphicsRootDescriptorTable(0, sceneOutput->GetSRV());
+
 	// For every pass.. draw
+	// Vignette as test case
 	commandList->DrawIndexedInstanced(screenQuad->GetIndicesCount(), 1, 0, 0, 0);
 }
 

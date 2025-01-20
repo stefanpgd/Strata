@@ -16,6 +16,6 @@ private:
 	void InitializeScreenSquad();
 
 private:
-	RenderTarget* postProcessTarget;
+	RenderTarget* sceneOutput;
 	Mesh* screenQuad;
 };
