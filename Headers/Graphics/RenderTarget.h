@@ -7,7 +7,8 @@ class DepthBuffer;
 class RenderTarget
 {
 public:
-	RenderTarget(unsigned int width, unsigned int height, bool useDepthBuffer);
+	RenderTarget(unsigned int width, unsigned int height, 
+		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM, bool useDepthBuffer = true);
 
 	void Clear();
 	void Bind();

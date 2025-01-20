@@ -10,7 +10,7 @@
 Camera::Camera(glm::vec3 position) : Position(position)
 {
 	UpdateViewMatrix();
-	ResizeProjectionMatrix(DXAccess::GetWindow()->GetWindowWidth(), DXAccess::GetWindow()->GetWindowHeight());
+	ResizeProjectionMatrix(DXAccess::GetWindowWidth(), DXAccess::GetWindowHeight());
 }
 
 void Camera::Update(float deltaTime)

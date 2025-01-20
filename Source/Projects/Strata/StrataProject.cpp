@@ -7,7 +7,7 @@
 
 /// <summary>
 /// Goal 1 [x]: A plane, a cube on it, and a focused camera that can pan around with dragging the mouse
-/// Goal 2 [ ]: Post Processing - Vignette & Bloom(?)
+/// Goal 2 [-]: Post Processing - Vignette & Bloom(?)
 /// Goal 3 [ ]: Textured Cube, with mipmapping
 /// Goal 4: Some sort of scene serialization (?)
 /// 
@@ -16,8 +16,8 @@
 /// .. to be determined ..
 /// </summary>
 /// 
-/// To do post processing I really have to properly figure out the render target stuff.
-/// This might also mean rewriting elements of the Window Class
+/// - [x] To do post processing I really have to properly figure out the render target stuff.
+///		  This might also mean rewriting elements of the Window Class
 /// 
 /// To do - Read into mip-maps, together with things such as the subresource stuff to properly access it in HLSL
 /// Likely start with Jeremiah's stuff and decipher it..

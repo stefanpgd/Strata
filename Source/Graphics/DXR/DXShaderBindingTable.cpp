@@ -108,7 +108,7 @@ void DXShaderBindingTable::UpdateDispatchRayDescription()
 	dispatchRayDescription.HitGroupTable.SizeInBytes = shaderRecordSize * hitEntries.size();
 	dispatchRayDescription.HitGroupTable.StrideInBytes = shaderRecordSize;
 
-	dispatchRayDescription.Width = DXAccess::GetWindow()->GetWindowWidth();
-	dispatchRayDescription.Height = DXAccess::GetWindow()->GetWindowHeight();
+	dispatchRayDescription.Width = DXAccess::GetWindowWidth();
+	dispatchRayDescription.Height = DXAccess::GetWindowHeight();
 	dispatchRayDescription.Depth = 1;
 }

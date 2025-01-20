@@ -4,21 +4,16 @@
 #include "Graphics/DXUtilities.h"
 #include "Graphics/DepthBuffer.h"
 
-RenderTarget::RenderTarget(unsigned int width, unsigned int height, bool useDepthBuffer) 
-	: width(width), height(height), useDepthBuffer(useDepthBuffer)
+RenderTarget::RenderTarget(unsigned int width, unsigned int height, DXGI_FORMAT format, bool useDepthBuffer) 
+	: width(width), height(height), format(format), useDepthBuffer(useDepthBuffer)
 {
-	// todo, add bind function
-	// todo replace with constructor parameter
-
-	format = DXGI_FORMAT_R8G8B8A8_UNORM;
-
 	// Default/initial state
 	resourceState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
 	AllocateResource();
 	CreateDescriptors();
 
-	if(useDepthBuffer)
+	if(this->useDepthBuffer)
 	{
 		depthBuffer = new DepthBuffer(this->width, this->height);
 	}

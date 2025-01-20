@@ -19,6 +19,11 @@ namespace DXAccess
 	
 	Window* GetWindow();
 
+	// Since both 'GetWindowWidth' and 'GetWindowHeight' get used often through Window.
+	// This shortcut has been added to save some typing.
+	unsigned int GetWindowWidth();
+	unsigned int GetWindowHeight();
+
 	unsigned int GetCurrentScreenBufferIndex();
 	Texture* GetDefaultTexture();
 }

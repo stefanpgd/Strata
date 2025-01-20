@@ -226,4 +226,13 @@ Window* DXAccess::GetWindow()
 {
 	return window;
 }
+
+unsigned int DXAccess::GetWindowWidth()
+{
+	return window->GetWindowWidth();
+}
+unsigned int DXAccess::GetWindowHeight()
+{
+	return window->GetWindowHeight();
+}
 #pragma endregion

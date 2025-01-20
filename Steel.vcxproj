@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Projects\Strata\PostProcessingStage.cpp" />
     <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
     <ClCompile Include="Source\Projects\Strata\ModelRenderStage.cpp" />
     <ClCompile Include="Source\Graphics\DXBuffer.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Headers\Projects\Strata\StrataProject.h" />
     <ClInclude Include="Headers\Projects\Strata\ModelRenderStage.h" />
     <ClInclude Include="Headers\Graphics\RenderTarget.h" />
+    <ClInclude Include="Headers\Projects\Strata\PostProcessingStage.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Dependencies\Microsoft\d3dcompiler_47.dll">

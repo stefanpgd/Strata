@@ -21,11 +21,7 @@ ModelRenderStage::ModelRenderStage(Scene* scene) : activeScene(scene)
 		return;
 	}
 
-	// TODO: Knowing how common this is, just outright make WindowWidth & Height into DXAcccess
-	unsigned int windowWidth = DXAccess::GetWindow()->GetWindowWidth();
-	unsigned int windowHeight = DXAccess::GetWindow()->GetWindowHeight();
-	renderTarget = new RenderTarget(windowWidth, windowHeight, true);
-
+	renderTarget = new RenderTarget(DXAccess::GetWindowWidth(), DXAccess::GetWindowHeight());
 	InitializePipeline();
 }
 
