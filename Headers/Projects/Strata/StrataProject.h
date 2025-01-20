@@ -3,6 +3,7 @@
 
 class Scene;
 class ModelRenderStage;
+class PostProcessingStage;
 
 class StrataProject : public Project
 {
@@ -15,4 +16,5 @@ public:
 private:
 	Scene* scene;
 	ModelRenderStage* modelRenderStage;
+	PostProcessingStage* postProcessingStage;
 };

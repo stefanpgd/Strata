@@ -1,4 +1,7 @@
 #include "Projects/Strata/PostProcessingStage.h"
+#include "Graphics/PostProcessor.h"
+#include "Graphics/RenderTarget.h"
+#include "Graphics/DXUtilities.h"
 
 /// <summary>
 /// Lets think architecture -
@@ -15,10 +18,20 @@
 /// We also want the option to switch it On/Off, which means that this stage will require some booleans for that.
 /// </summary>
 
+// Knowing this, let's start with Vignette through a Post Processor, and being able to turn off/on the post processing
 PostProcessingStage::PostProcessingStage()
 {
+	postProcessor = new PostProcessor();
+	postProcessingTarget = new RenderTarget(DXAccess::GetWindowWidth(), DXAccess::GetWindowHeight());
 }
 
 void PostProcessingStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
+	postProcessingTarget->Bind();
+	postProcessingTarget->Clear();
+
+	// if postEnabled.. etc.
+	postProcessor->Execute(commandList);
+
+	postProcessingTarget->CopyToScreenBuffer();
 }

@@ -1,6 +1,9 @@
 #pragma once
 #include "Graphics/RenderStage.h"
 
+class PostProcessor;
+class RenderTarget;
+
 class PostProcessingStage : public RenderStage
 {
 public:
@@ -9,5 +12,6 @@ public:
 	void RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList) override;
 
 private:
-
+	PostProcessor* postProcessor;
+	RenderTarget* postProcessingTarget;
 };

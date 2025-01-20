@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\PostProcessor.cpp" />
     <ClCompile Include="Source\Projects\Strata\PostProcessingStage.cpp" />
     <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
     <ClCompile Include="Source\Projects\Strata\ModelRenderStage.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Headers\Projects\Strata\ModelRenderStage.h" />
     <ClInclude Include="Headers\Graphics\RenderTarget.h" />
     <ClInclude Include="Headers\Projects\Strata\PostProcessingStage.h" />
+    <ClInclude Include="Headers\Graphics\PostProcessor.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Dependencies\Microsoft\d3dcompiler_47.dll">
@@ -183,6 +185,18 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Source\Shaders\postprocess_screen.vertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\postprocess_test.pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Source\Shaders\simpleRasterizer.pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

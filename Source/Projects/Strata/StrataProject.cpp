@@ -1,5 +1,6 @@
 #include "Projects/Strata/StrataProject.h"
 #include "Projects/Strata/ModelRenderStage.h"
+#include "Projects/Strata/PostProcessingStage.h"
 
 #include "Framework/Scene.h"
 #include "Graphics/Camera.h" // TODO: consider if this should be part of Framework or Graphics
@@ -37,6 +38,7 @@ StrataProject::StrataProject()
 	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
 
 	modelRenderStage = new ModelRenderStage(scene);
+	postProcessingStage = new PostProcessingStage();
 }
 
 void StrataProject::Update(float deltaTime)
@@ -46,5 +48,6 @@ void StrataProject::Update(float deltaTime)
 
 void StrataProject::Render(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
-	modelRenderStage->RecordStage(commandList);
+	//modelRenderStage->RecordStage(commandList);
+	postProcessingStage->RecordStage(commandList);
 }
