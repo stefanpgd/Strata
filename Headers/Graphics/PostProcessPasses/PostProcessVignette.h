@@ -13,6 +13,8 @@ private:
 	void InitializePipeline();
 
 private:
+	RenderTarget* postProcessedScene;
+
 	float strength = 1.0f;
 	float aspectRatio = 1.0f;
 };

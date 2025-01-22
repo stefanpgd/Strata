@@ -1,21 +1,21 @@
 #include "Graphics/PostProcessPasses/PostProcessVignette.h"
-#include "Graphics/DXRootSignature.h"
-#include "Graphics/DXPipeline.h"
-#include "Graphics/RenderTarget.h"
 #include "Graphics/DXAccess.h"
+#include "Graphics/RenderTarget.h"
 
 #include <imgui.h>
 
 PostProcessVignette::PostProcessVignette()
 {
 	InitializePipeline();
+
+	postProcessedScene = new RenderTarget(DXAccess::GetWindowWidth(), DXAccess::GetWindowHeight());
 }
 
 void PostProcessVignette::Update(float deltaTime)
 {
 	ImGui::Begin("Post Processing");
 	ImGui::SeparatorText("Vignette");
-	ImGui::Checkbox("Is Enabled", &IsEnabled);
+	ImGui::Checkbox("Vignette Enabled", &IsEnabled);
 	ImGui::DragFloat("Strength", &strength, 0.01f, 0.0f, 3.0f);
 	ImGui::Separator();
 	ImGui::End();
@@ -23,11 +23,19 @@ void PostProcessVignette::Update(float deltaTime)
 
 void PostProcessVignette::RecordPass(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
+	postProcessedScene->CopyFromRenderTarget(postProcessTarget);
+	postProcessedScene->PrepareAsShaderResource();
+
+	postProcessTarget->Bind();
+	postProcessTarget->Clear();
+
 	commandList->SetGraphicsRootSignature(rootSignature->GetAddress());
 	commandList->SetPipelineState(pipeline->GetAddress());
 	
-	commandList->SetGraphicsRootDescriptorTable(0, sceneOutput->GetSRV());
+	commandList->SetGraphicsRootDescriptorTable(0, postProcessedScene->GetSRV());
 	commandList->SetGraphicsRoot32BitConstants(1, 1, &strength, 0);
+
+	commandList->DrawIndexedInstanced(screenQuad->GetIndicesCount(), 1, 0, 0, 0);
 }
 
 void PostProcessVignette::InitializePipeline()

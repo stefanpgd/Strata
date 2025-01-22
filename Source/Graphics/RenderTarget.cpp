@@ -21,6 +21,12 @@ RenderTarget::RenderTarget(unsigned int width, unsigned int height, DXGI_FORMAT 
 
 void RenderTarget::Clear()
 {
+	if(resourceState != D3D12_RESOURCE_STATE_RENDER_TARGET)
+	{
+		LOG(Log::MessageType::Error, "You are trying to clear target without it being in the right state. Bind() it first.");
+		return;
+	}
+
 	const float renderTargetColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	
 	DXCommands* directCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_DIRECT);

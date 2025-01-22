@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\PostProcessPasses\PostProcessBloom.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessPass.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessPasses\PostProcessVignette.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessor.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Headers\Graphics\PostProcessor.h" />
     <ClInclude Include="Headers\Graphics\PostProcessPass.h" />
     <ClInclude Include="Headers\Graphics\PostProcessPasses\PostProcessVignette.h" />
+    <ClInclude Include="Headers\Graphics\PostProcessPasses\PostProcessBloom.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Dependencies\Microsoft\d3dcompiler_47.dll">
@@ -189,6 +191,24 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Source\Shaders\postprocess_bloomblur.pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\postprocess_bloomblend.pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\postprocess_bloomtreshold.pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Source\Shaders\postprocess_screen.vertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>

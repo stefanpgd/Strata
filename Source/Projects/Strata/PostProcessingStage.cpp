@@ -5,13 +5,16 @@
 
 // Post Processing Passes
 #include "Graphics/PostProcessPasses/PostProcessVignette.h"
+#include "Graphics/PostProcessPasses/PostProcessBloom.h"
 
 PostProcessingStage::PostProcessingStage()
 {
 	postProcessor = new PostProcessor();
 
+	PostProcessBloom* bloomPass = new PostProcessBloom();
 	PostProcessVignette* vignettePass = new PostProcessVignette();
 
+	postProcessor->AddPass(bloomPass);
 	postProcessor->AddPass(vignettePass);
 }
 

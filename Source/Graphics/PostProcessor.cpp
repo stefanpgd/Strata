@@ -43,12 +43,11 @@ void PostProcessor::Execute(ComPtr<ID3D12GraphicsCommandList4> commandList)
 	commandList->IASetIndexBuffer(&screenQuad->GetIndexBufferView());
 
 	// 5) Iterate over all passes and record their commands
-	for(PostProcessPass* pass : passes)
+	for(int i = 0; i < passes.size(); i++)
 	{
-		if(pass->IsEnabled)
+		if(passes[i]->IsEnabled)
 		{
-			pass->RecordPass(commandList);
-			commandList->DrawIndexedInstanced(screenQuad->GetIndicesCount(), 1, 0, 0, 0);
+			passes[i]->RecordPass(commandList);
 		}
 	}
 
@@ -58,7 +57,7 @@ void PostProcessor::Execute(ComPtr<ID3D12GraphicsCommandList4> commandList)
 
 void PostProcessor::AddPass(PostProcessPass* pass)
 {
-	pass->SetRenderTargets(sceneOutput, postProcessingTarget);
+	pass->SetComponents(sceneOutput, postProcessingTarget, screenQuad);
 	passes.push_back(pass);
 }
 

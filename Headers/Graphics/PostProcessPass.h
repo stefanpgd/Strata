@@ -1,14 +1,14 @@
 #pragma once
 #include "Graphics/DXCommon.h"
-
-class DXRootSignature;
-class DXPipeline;
-class RenderTarget;
+#include "Graphics/DXRootSignature.h"
+#include "Graphics/DXPipeline.h"
+#include "Graphics/Mesh.h"
+#include "Graphics/RenderTarget.h"
 
 class PostProcessPass
 {
 public:
-	void SetRenderTargets(RenderTarget* sceneOutput, RenderTarget* postProcessTarget);
+	void SetComponents(RenderTarget* sceneOutput, RenderTarget* postProcessTarget, Mesh* screenQuad);
 
 	virtual void Update(float deltaTime) = 0;
 	virtual void RecordPass(ComPtr<ID3D12GraphicsCommandList4> commandList) = 0;
@@ -22,4 +22,5 @@ protected:
 
 	RenderTarget* sceneOutput;
 	RenderTarget* postProcessTarget;
+	Mesh* screenQuad;
 };
