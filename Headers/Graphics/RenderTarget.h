@@ -16,8 +16,10 @@ public:
 
 	void CopyToScreenBuffer();
 	void CopyFromScreenBuffer();
+	void CopyFromRenderTarget(RenderTarget* target);
 
 	ComPtr<ID3D12Resource> GetResource();
+	D3D12_RESOURCE_STATES GetResourceState();
 	CD3DX12_CPU_DESCRIPTOR_HANDLE GetRTV();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetSRV();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetUAV();

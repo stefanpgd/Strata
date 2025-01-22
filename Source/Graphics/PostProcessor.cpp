@@ -2,64 +2,64 @@
 #include "Graphics/Mesh.h"
 #include "Graphics/RenderTarget.h"
 #include "Graphics/DXUtilities.h"
-
-// TEMP //
-#include "Graphics/DXRootSignature.h"
-#include "Graphics/DXPipeline.h"
-#include <imgui.h>
-#include "Utilities/EditorElements.h"
-
-DXRootSignature* root;
-DXPipeline* pipeline;
+#include "Graphics/PostProcessPass.h"
 
 PostProcessor::PostProcessor()
 {
 	InitializeScreenSquad();
-	sceneOutput = new RenderTarget(DXAccess::GetWindowWidth(), DXAccess::GetWindowHeight());
 
-	CD3DX12_DESCRIPTOR_RANGE1 diffuseTexture[1];
-	diffuseTexture[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-	
-	CD3DX12_ROOT_PARAMETER1 rootParameters[1];
-	rootParameters[0].InitAsDescriptorTable(1, &diffuseTexture[0], D3D12_SHADER_VISIBILITY_PIXEL); // Lighting data
+	// Scene Output - A copy of the "main" render target before post processing
+	// Post Processing Target - the render target which gets used as target for reach post process pass
+	unsigned int width = DXAccess::GetWindowWidth();
+	unsigned int height = DXAccess::GetWindowHeight();
 
-	root = new DXRootSignature(rootParameters, _countof(rootParameters), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-	DXPipelineDescription pipelineDescription;
-	pipelineDescription.RootSignature = root;
-	pipelineDescription.VertexPath = "Source/Shaders/postprocess_screen.vertex.hlsl";
-	pipelineDescription.PixelPath = "Source/Shaders/postprocess_test.pixel.hlsl";
-	
-	pipeline = new DXPipeline(pipelineDescription);
+	sceneOutput = new RenderTarget(width, height);
+	postProcessingTarget = new RenderTarget(width, height);
 }
 
 void PostProcessor::Update(float deltaTime)
 {
-	ImGui::Begin("Render Targets");
-
-	float aspectRatio = float(DXAccess::GetWindowWidth()) / float(DXAccess::GetWindowHeight());
-	EditorRenderTargetHighlight(sceneOutput, "Scene View", 250, aspectRatio);
-
-	ImGui::End();
+	for(PostProcessPass* pass : passes)
+	{
+		pass->Update(deltaTime);
+	}
 }
 
 void PostProcessor::Execute(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
-	// First copy the current output of the scene, so that it can be used for our post process passes. 
+	// 1) Clear & Bind out target for the post processor
+	postProcessingTarget->Clear();
+	postProcessingTarget->Bind();
+
+	// 2) Prepare our Scene Output which might be used by our passes
 	sceneOutput->CopyFromScreenBuffer();
 	sceneOutput->PrepareAsShaderResource();
 
-	commandList->SetGraphicsRootSignature(root->GetAddress());
-	commandList->SetPipelineState(pipeline->GetAddress());
+	// 3) As back up, in case no pass gets executed, just copy the SceneOutput
+	postProcessingTarget->CopyFromRenderTarget(sceneOutput);
 
+	// 4) Bind Screen Quad which we can use for our rasterizer and all passes
 	commandList->IASetVertexBuffers(0, 1, &screenQuad->GetVertexBufferView());
 	commandList->IASetIndexBuffer(&screenQuad->GetIndexBufferView());
 
-	commandList->SetGraphicsRootDescriptorTable(0, sceneOutput->GetSRV());
+	// 5) Iterate over all passes and record their commands
+	for(PostProcessPass* pass : passes)
+	{
+		if(pass->IsEnabled)
+		{
+			pass->RecordPass(commandList);
+			commandList->DrawIndexedInstanced(screenQuad->GetIndicesCount(), 1, 0, 0, 0);
+		}
+	}
 
-	// For every pass.. draw
-	// Vignette as test case
-	commandList->DrawIndexedInstanced(screenQuad->GetIndicesCount(), 1, 0, 0, 0);
+	// 6) Copy end result over to the screen buffer (of this frame)
+	postProcessingTarget->CopyToScreenBuffer();
+}
+
+void PostProcessor::AddPass(PostProcessPass* pass)
+{
+	pass->SetRenderTargets(sceneOutput, postProcessingTarget);
+	passes.push_back(pass);
 }
 
 void PostProcessor::InitializeScreenSquad()

@@ -88,6 +88,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\PostProcessPass.cpp" />
+    <ClCompile Include="Source\Graphics\PostProcessPasses\PostProcessVignette.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessor.cpp" />
     <ClCompile Include="Source\Projects\Strata\PostProcessingStage.cpp" />
     <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
@@ -178,6 +180,8 @@
     <ClInclude Include="Headers\Graphics\RenderTarget.h" />
     <ClInclude Include="Headers\Projects\Strata\PostProcessingStage.h" />
     <ClInclude Include="Headers\Graphics\PostProcessor.h" />
+    <ClInclude Include="Headers\Graphics\PostProcessPass.h" />
+    <ClInclude Include="Headers\Graphics\PostProcessPasses\PostProcessVignette.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Dependencies\Microsoft\d3dcompiler_47.dll">
@@ -191,7 +195,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Source\Shaders\postprocess_test.pixel.hlsl">
+    <FxCompile Include="Source\Shaders\postprocess_vignette.pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>

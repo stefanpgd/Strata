@@ -106,6 +106,22 @@ void RenderTarget::CopyFromScreenBuffer()
 	TransitionResource(screenBuffer.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
+void RenderTarget::CopyFromRenderTarget(RenderTarget* target)
+{
+	DXCommands* directCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
+	ComPtr<ID3D12Resource> targetResource = target->GetResource();
+	D3D12_RESOURCE_STATES targetOriginalState = target->GetResourceState();
+
+	TransitionResource(renderTarget.Get(), resourceState, D3D12_RESOURCE_STATE_COPY_DEST);
+	TransitionResource(targetResource.Get(), targetOriginalState, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+	commandList->CopyResource(renderTarget.Get(), targetResource.Get());
+
+	TransitionResource(renderTarget.Get(), D3D12_RESOURCE_STATE_COPY_DEST, resourceState);
+	TransitionResource(targetResource.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, targetOriginalState);
+}
+
 void RenderTarget::AllocateResource()
 {
 	D3D12_RESOURCE_DESC renderTargetDescription = {};
@@ -162,6 +178,11 @@ void RenderTarget::CreateDescriptors()
 ComPtr<ID3D12Resource> RenderTarget::GetResource()
 {
 	return renderTarget;
+}
+
+D3D12_RESOURCE_STATES RenderTarget::GetResourceState()
+{
+	return resourceState;
 }
 
 CD3DX12_CPU_DESCRIPTOR_HANDLE RenderTarget::GetRTV()
