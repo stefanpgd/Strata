@@ -17,6 +17,9 @@ RenderTarget::RenderTarget(unsigned int width, unsigned int height, DXGI_FORMAT 
 	{
 		depthBuffer = new DepthBuffer(this->width, this->height);
 	}
+
+	scissorRect = CD3DX12_RECT(0, 0, width, height);
+	viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height));
 }
 
 void RenderTarget::Clear()
@@ -62,6 +65,9 @@ void RenderTarget::Bind()
 	{
 		commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 	}
+
+	commandList->RSSetViewports(1, &viewport);
+	commandList->RSSetScissorRects(1, &scissorRect);
 }
 
 void RenderTarget::PrepareAsShaderResource()

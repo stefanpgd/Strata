@@ -32,6 +32,9 @@ private:
 	ComPtr<ID3D12Resource> renderTarget;
 	D3D12_RESOURCE_STATES resourceState;
 
+	D3D12_RECT scissorRect;
+	D3D12_VIEWPORT viewport;
+
 	DepthBuffer* depthBuffer;
 	bool useDepthBuffer;
 
