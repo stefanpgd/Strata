@@ -18,7 +18,7 @@ Texture::Texture(void* data, int width, int height, DXGI_FORMAT format, unsigned
 	CreateDescriptors();
 }
 
-Texture::Texture(const std::string& filePath)
+Texture::Texture(const std::string& filePath, DXGI_FORMAT format)
 {
 	// TODO: Probably add a direct way to access the texture manager here..
 	int width;
@@ -28,7 +28,7 @@ Texture::Texture(const std::string& filePath)
 
 	this->width = width;
 	this->height = height;
-	this->format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	this->format = format;
 	formatSizeInBytes = 4;
 
 	if(buffer == NULL)

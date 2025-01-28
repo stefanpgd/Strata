@@ -13,7 +13,7 @@ public:
 	Texture(int width, int height, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
 	Texture(void* data, int width, int height, 
 		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM, unsigned int formatSizeInBytes = 4);
-	Texture(const std::string& filePath); 
+	Texture(const std::string& filePath, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM); 
 
 	~Texture();
 

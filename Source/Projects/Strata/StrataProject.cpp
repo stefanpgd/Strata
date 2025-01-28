@@ -5,12 +5,22 @@
 #include "Framework/Scene.h"
 #include "Graphics/Camera.h" // TODO: consider if this should be part of Framework or Graphics
 #include "Graphics/Model.h"
+#include "Graphics/Mesh.h"
 
 /// <summary>
 /// Goal 1 [x]: A plane, a cube on it, and a focused camera that can pan around with dragging the mouse
-/// Goal 2 [-]: Post Processing - Vignette & Bloom(?)
-/// Goal 3 [ ]: Textured Cube, with mipmapping
-/// Goal 4: Some sort of scene serialization (?)
+/// Goal 2 [x]: Post Processing - Vignette & Bloom(?)
+/// Goal 3 [-]: Skydome & HDRi 
+/// Goal 4 [ ]: TBD
+/// 
+/// Goals to look into:
+/// - Loading in big scenes/models
+/// - Default material system
+/// - Scene Serialization
+/// - Editor utilities for adding objects
+/// - Mipmapping for textures
+/// 
+/// Note about Bloom: I've quite a hacky version of it. But it will suffice for now. 
 /// 
 /// Optional goals to work through
 /// - Proper implementation of resizing for all base systems?
@@ -36,6 +46,11 @@ StrataProject::StrataProject()
 	Model* cube = scene->AddModel("Assets/Models/Prototype/proto_cube_01.gltf");
 	cube->transform.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
+
+	Model* skydome = scene->AddModel("Assets/Models/Sphere/sphere.gltf");
+	//Texture* test = new Texture("Assets/Skydomes/sea.exr");
+	skydome->transform.Scale = glm::vec3(-1000.0);
+
 
 	modelRenderStage = new ModelRenderStage(scene);
 	postProcessingStage = new PostProcessingStage();

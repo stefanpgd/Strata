@@ -38,10 +38,9 @@ private:
 
 	float FOV = 60.0f;
 	float nearClip = 0.01f;
-	float farClip = 1000.0f;
+	float farClip = 10000.0f;
 	float aspectRatio;
 
-	// Testing attention please //
 	float scrollVelocity = 0.0f;
 	float minimumZoomSpacing = 1.5f;
 	float zoomSpeed = 4.0f;
