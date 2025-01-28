@@ -6,6 +6,8 @@
 #include "Graphics/Camera.h" // TODO: consider if this should be part of Framework or Graphics
 #include "Graphics/Model.h"
 #include "Graphics/Mesh.h"
+#include "Graphics/Texture.h"
+#include <tinyexr.h>
 
 /// <summary>
 /// Goal 1 [x]: A plane, a cube on it, and a focused camera that can pan around with dragging the mouse
@@ -47,10 +49,24 @@ StrataProject::StrataProject()
 	cube->transform.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
 
-	Model* skydome = scene->AddModel("Assets/Models/Sphere/sphere.gltf");
-	//Texture* test = new Texture("Assets/Skydomes/sea.exr");
-	skydome->transform.Scale = glm::vec3(-1000.0);
+	const char* err = nullptr;
+	float* image;
 
+	int width;
+	int height;
+
+	int result = LoadEXR(&image, &width, &height, "Assets/Skydomes/sea.exr", &err);
+	if(result != TINYEXR_SUCCESS)
+	{
+		std::string error(err);
+		assert(false);
+	}
+
+	Texture* seaEXR = new Texture(image, width, height, DXGI_FORMAT_R32G32B32A32_FLOAT, sizeof(float) * 4);
+
+	Model* skydome = scene->AddModel("Assets/Models/Sphere/sphere.gltf");
+	skydome->transform.Scale = glm::vec3(-1000.0);
+	skydome->GetMesh(0)->Textures.Albedo = seaEXR;
 
 	modelRenderStage = new ModelRenderStage(scene);
 	postProcessingStage = new PostProcessingStage();
