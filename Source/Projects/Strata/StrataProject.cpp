@@ -1,6 +1,7 @@
 #include "Projects/Strata/StrataProject.h"
 #include "Projects/Strata/ModelRenderStage.h"
 #include "Projects/Strata/PostProcessingStage.h"
+#include "Projects/Strata/SkydomeStage.h"
 
 #include "Framework/Scene.h"
 #include "Graphics/Camera.h" // TODO: consider if this should be part of Framework or Graphics
@@ -49,26 +50,8 @@ StrataProject::StrataProject()
 	cube->transform.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
 
-	const char* err = nullptr;
-	float* image;
-
-	int width;
-	int height;
-
-	int result = LoadEXR(&image, &width, &height, "Assets/Skydomes/sea.exr", &err);
-	if(result != TINYEXR_SUCCESS)
-	{
-		std::string error(err);
-		assert(false);
-	}
-
-	Texture* seaEXR = new Texture(image, width, height, DXGI_FORMAT_R32G32B32A32_FLOAT, sizeof(float) * 4);
-
-	Model* skydome = scene->AddModel("Assets/Models/Sphere/sphere.gltf");
-	skydome->transform.Scale = glm::vec3(-1000.0);
-	skydome->GetMesh(0)->Textures.Albedo = seaEXR;
-
 	modelRenderStage = new ModelRenderStage(scene);
+	skydomeStage = new SkydomeStage(scene, modelRenderStage->renderTarget);
 	postProcessingStage = new PostProcessingStage();
 }
 
@@ -81,5 +64,6 @@ void StrataProject::Update(float deltaTime)
 void StrataProject::Render(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
 	modelRenderStage->RecordStage(commandList);
+	skydomeStage->RecordStage(commandList);
 	postProcessingStage->RecordStage(commandList);
 }

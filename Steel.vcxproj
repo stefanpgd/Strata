@@ -89,6 +89,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\tinyexr\tinyexr.cpp" />
+    <ClCompile Include="Source\Projects\Strata\SkydomeStage.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessPasses\PostProcessBloom.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessPass.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessPasses\PostProcessVignette.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Headers\Graphics\PostProcessPass.h" />
     <ClInclude Include="Headers\Graphics\PostProcessPasses\PostProcessVignette.h" />
     <ClInclude Include="Headers\Graphics\PostProcessPasses\PostProcessBloom.h" />
+    <ClInclude Include="Headers\Projects\Strata\SkydomeStage.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Dependencies\Microsoft\d3dcompiler_47.dll">
@@ -231,6 +233,12 @@
     <FxCompile Include="Source\Shaders\simpleRasterizer.vertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\skydome.pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
     </FxCompile>

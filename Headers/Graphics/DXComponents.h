@@ -11,6 +11,5 @@
 #include "Graphics/DXRootSignature.h"
 #include "Graphics/DXPipeline.h"
 #include "Graphics/DXComputePipeline.h"
-#include "Graphics/Window.h"
-#include "Graphics/Texture.h"
 #include "Graphics/DXBuffer.h"
+#include "Graphics/Window.h"

@@ -17,9 +17,11 @@ public:
 private:
 	void InitializePipeline();
 	
+public:
+	RenderTarget* renderTarget;
+
 private:
 	Scene* activeScene;
-	RenderTarget* renderTarget;
 
 	DXRootSignature* rootSignature;
 	DXPipeline* renderPipeline;

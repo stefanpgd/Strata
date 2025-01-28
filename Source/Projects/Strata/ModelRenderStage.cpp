@@ -1,8 +1,6 @@
 #include "Projects/Strata/ModelRenderStage.h"
 #include "Graphics/DXComponents.h"
-#include "Graphics/Model.h"
-#include "Graphics/Mesh.h"
-#include "Graphics/Camera.h"
+#include "Graphics/DXObject.h"
 
 #include "Framework/Scene.h"
 #include "Framework/Mathematics.h"
@@ -54,8 +52,6 @@ void ModelRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandLis
 			commandList->DrawIndexedInstanced(mesh->GetIndicesCount(), 1, 0, 0, 0);
 		}
 	}
-
-	renderTarget->CopyToScreenBuffer();
 }
 
 void ModelRenderStage::InitializePipeline()
