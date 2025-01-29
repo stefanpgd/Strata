@@ -1,7 +1,6 @@
 #include "Projects/Strata/StrataProject.h"
-#include "Projects/Strata/ModelRenderStage.h"
+#include "Projects/Strata/SceneRenderStage.h"
 #include "Projects/Strata/PostProcessingStage.h"
-#include "Projects/Strata/SkydomeStage.h"
 
 #include "Framework/Scene.h"
 #include "Graphics/Camera.h" // TODO: consider if this should be part of Framework or Graphics
@@ -13,8 +12,8 @@
 /// <summary>
 /// Goal 1 [x]: A plane, a cube on it, and a focused camera that can pan around with dragging the mouse
 /// Goal 2 [x]: Post Processing - Vignette & Bloom(?)
-/// Goal 3 [-]: Skydome & HDRi 
-/// Goal 4 [ ]: TBD
+/// Goal 3 [x]: Skydome & HDRi 
+/// Goal 4 [-]: HDR to LDR
 /// 
 /// Goals to look into:
 /// - Loading in big scenes/models
@@ -50,8 +49,7 @@ StrataProject::StrataProject()
 	cube->transform.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
 
-	modelRenderStage = new ModelRenderStage(scene);
-	skydomeStage = new SkydomeStage(scene, modelRenderStage->renderTarget);
+	sceneRenderStage = new SceneRenderStage(scene);
 	postProcessingStage = new PostProcessingStage();
 }
 
@@ -63,7 +61,6 @@ void StrataProject::Update(float deltaTime)
 
 void StrataProject::Render(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
-	modelRenderStage->RecordStage(commandList);
-	skydomeStage->RecordStage(commandList);
+	sceneRenderStage->RecordStage(commandList);
 	postProcessingStage->RecordStage(commandList);
 }

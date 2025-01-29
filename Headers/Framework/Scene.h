@@ -6,6 +6,7 @@
 
 class Model;
 class Camera;
+class Texture;
 
 /// <summary>
 /// Responsible for owning and managing all the geometry in a Scene
@@ -21,6 +22,10 @@ public:
 	Model* AddModel(const std::string& path);
 
 	const std::vector<Model*>& GetModels();
+
+private:
+	void LoadSkydomeTexture(std::string exrPath);
+
 public:
 	Camera* Camera;
 	glm::vec3 SunDirection;
@@ -28,6 +33,9 @@ public:
 private:
 	std::vector<Model*> models;
 	bool enableRayTracingGeometry;
+
+	Model* skydome;
+	Texture* skydomeTexture;
 
 	friend class Editor;
 };

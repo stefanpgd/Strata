@@ -1,6 +1,10 @@
 #include "Framework/Scene.h"
 #include "Graphics/Model.h"
+#include "Graphics/Mesh.h"
 #include "Graphics/Camera.h"
+#include "Graphics/Texture.h"
+#include "Utilities/Logger.h"
+#include <tinyexr.h>
 
 Scene::Scene(bool enableRayTracingGeometry, bool spawnDefaultObjects) 
 	: enableRayTracingGeometry(enableRayTracingGeometry)
@@ -8,9 +12,11 @@ Scene::Scene(bool enableRayTracingGeometry, bool spawnDefaultObjects)
 	if(spawnDefaultObjects)
 	{
 		AddModel("Assets/Models/Default/GroundPlane/plane.gltf");
-		//AddModel("Assets/Models/Default/Dragon/dragon.gltf");
-		AddModel("Assets/Models/Default/FlightHelmet/FlightHelmet.gltf");
 	}
+
+	skydome = AddModel("Assets/Models/Sphere/sphere.gltf");
+	skydome->transform.Scale = glm::vec3(-1000.0f);
+	LoadSkydomeTexture("Assets/Skydomes/sea.exr");
 
 	SunDirection = glm::normalize(glm::vec3(-0.325, 0.785f, 0.52f));
 	Camera = new ::Camera();
@@ -33,4 +39,25 @@ Model* Scene::AddModel(const std::string& path)
 const std::vector<Model*>& Scene::GetModels()
 {
 	return models;
+}
+
+void Scene::LoadSkydomeTexture(std::string exrPath)
+{
+	const char* err = nullptr;
+	float* image;
+
+	int width;
+	int height;
+
+	int result = LoadEXR(&image, &width, &height, exrPath.c_str(), &err);
+	if(result != TINYEXR_SUCCESS)
+	{
+		std::string error(err);
+		LOG(Log::MessageType::Error, "EXR Failed to load:");
+		LOG(Log::MessageType::Error, error.c_str());
+		assert(false);
+	}
+
+	skydomeTexture = new Texture(image, width, height, DXGI_FORMAT_R32G32B32A32_FLOAT, sizeof(float) * 4);
+	skydome->GetMesh(0)->Textures.Albedo = skydomeTexture;
 }

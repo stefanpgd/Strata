@@ -2,9 +2,8 @@
 #include "Framework/Project.h"
 
 class Scene;
-class ModelRenderStage;
+class SceneRenderStage;
 class PostProcessingStage;
-class SkydomeStage;
 
 class StrataProject : public Project
 {
@@ -17,7 +16,6 @@ public:
 private:
 	Scene* scene;
 
-	SkydomeStage* skydomeStage;
-	ModelRenderStage* modelRenderStage;
+	SceneRenderStage* sceneRenderStage;
 	PostProcessingStage* postProcessingStage;
 };

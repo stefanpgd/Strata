@@ -7,10 +7,10 @@ class DXRootSignatre;
 class DXPipeline;
 class RenderTarget;
 
-class ModelRenderStage : public RenderStage
+class SceneRenderStage : public RenderStage
 {
 public:
-	ModelRenderStage(Scene* scene);
+	SceneRenderStage(Scene* scene);
 
 	void RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList) override;
 

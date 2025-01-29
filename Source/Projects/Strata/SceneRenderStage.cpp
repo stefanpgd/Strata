@@ -1,4 +1,4 @@
-#include "Projects/Strata/ModelRenderStage.h"
+#include "Projects/Strata/SceneRenderStage.h"
 #include "Graphics/DXComponents.h"
 #include "Graphics/DXObject.h"
 
@@ -10,7 +10,7 @@
 
 #include "Graphics/RenderTarget.h"
 
-ModelRenderStage::ModelRenderStage(Scene* scene) : activeScene(scene)
+SceneRenderStage::SceneRenderStage(Scene* scene) : activeScene(scene)
 {
 	if(!activeScene)
 	{
@@ -23,7 +23,7 @@ ModelRenderStage::ModelRenderStage(Scene* scene) : activeScene(scene)
 	InitializePipeline();
 }
 
-void ModelRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList)
+void SceneRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
 	DXDescriptorHeap* SRVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
@@ -52,9 +52,11 @@ void ModelRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandLis
 			commandList->DrawIndexedInstanced(mesh->GetIndicesCount(), 1, 0, 0, 0);
 		}
 	}
+
+	renderTarget->CopyToScreenBuffer();
 }
 
-void ModelRenderStage::InitializePipeline()
+void SceneRenderStage::InitializePipeline()
 {
 	// TODO: Expanding the root signature functionality, similar to the creation of as DXShaderBindingTable
 	// Might be very effective at reducing the time of making these pipelines 
