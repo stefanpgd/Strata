@@ -187,6 +187,11 @@ void RenderTarget::CreateDescriptors()
 }
 
 #pragma region
+DXGI_FORMAT RenderTarget::GetFormat()
+{
+	return format;
+}
+
 ComPtr<ID3D12Resource> RenderTarget::GetResource()
 {
 	return renderTarget;

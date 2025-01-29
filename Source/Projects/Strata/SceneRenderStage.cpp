@@ -19,7 +19,7 @@ SceneRenderStage::SceneRenderStage(Scene* scene) : activeScene(scene)
 		return;
 	}
 
-	renderTarget = new RenderTarget(DXAccess::GetWindowWidth(), DXAccess::GetWindowHeight());
+	renderTarget = new RenderTarget(DXAccess::GetWindowWidth(), DXAccess::GetWindowHeight(), DXGI_FORMAT_R32G32B32A32_FLOAT);
 	InitializePipeline();
 }
 
@@ -52,8 +52,6 @@ void SceneRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandLis
 			commandList->DrawIndexedInstanced(mesh->GetIndicesCount(), 1, 0, 0, 0);
 		}
 	}
-
-	renderTarget->CopyToScreenBuffer();
 }
 
 void SceneRenderStage::InitializePipeline()
@@ -73,6 +71,7 @@ void SceneRenderStage::InitializePipeline()
 	pipelineDescription.RootSignature = rootSignature;
 	pipelineDescription.VertexPath = "Source/Shaders/simpleRasterizer.vertex.hlsl";
 	pipelineDescription.PixelPath = "Source/Shaders/simpleRasterizer.pixel.hlsl";
+	pipelineDescription.RenderTargetFormat = renderTarget->GetFormat();
 
 	renderPipeline = new DXPipeline(pipelineDescription);
 }

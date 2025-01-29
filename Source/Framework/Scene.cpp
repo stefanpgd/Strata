@@ -15,8 +15,9 @@ Scene::Scene(bool enableRayTracingGeometry, bool spawnDefaultObjects)
 	}
 
 	skydome = AddModel("Assets/Models/Sphere/sphere.gltf");
-	skydome->transform.Scale = glm::vec3(-1000.0f);
-	LoadSkydomeTexture("Assets/Skydomes/sea.exr");
+	skydome->transform.Scale = glm::vec3(-8000.0f);
+	skydome->transform.Rotation = glm::vec3(0.0f, 0.0f, 180.0f);
+	LoadSkydomeTexture("Assets/Skydomes/sky.exr");
 
 	SunDirection = glm::normalize(glm::vec3(-0.325, 0.785f, 0.52f));
 	Camera = new ::Camera();

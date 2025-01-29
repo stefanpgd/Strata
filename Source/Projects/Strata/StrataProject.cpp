@@ -50,7 +50,7 @@ StrataProject::StrataProject()
 	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
 
 	sceneRenderStage = new SceneRenderStage(scene);
-	postProcessingStage = new PostProcessingStage();
+	postProcessingStage = new PostProcessingStage(sceneRenderStage->renderTarget);
 }
 
 void StrataProject::Update(float deltaTime)

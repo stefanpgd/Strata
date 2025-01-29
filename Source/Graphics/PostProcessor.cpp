@@ -4,7 +4,7 @@
 #include "Graphics/DXUtilities.h"
 #include "Graphics/PostProcessPass.h"
 
-PostProcessor::PostProcessor()
+PostProcessor::PostProcessor(RenderTarget* seneOutput) : sceneOutput(seneOutput)
 {
 	InitializeScreenSquad();
 
@@ -12,8 +12,7 @@ PostProcessor::PostProcessor()
 	// Post Processing Target - the render target which gets used as target for reach post process pass
 	unsigned int width = DXAccess::GetWindowWidth();
 	unsigned int height = DXAccess::GetWindowHeight();
-
-	sceneOutput = new RenderTarget(width, height);
+	
 	postProcessingTarget = new RenderTarget(width, height);
 }
 
@@ -27,22 +26,20 @@ void PostProcessor::Update(float deltaTime)
 
 void PostProcessor::Execute(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
+	if(!IsEnabled)
+	{
+		return;
+	}
+
 	// 1) Clear & Bind out target for the post processor
 	postProcessingTarget->Clear();
 	postProcessingTarget->Bind();
 
-	// 2) Prepare our Scene Output which might be used by our passes
-	sceneOutput->CopyFromScreenBuffer();
-	sceneOutput->PrepareAsShaderResource();
-
-	// 3) As back up, in case no pass gets executed, just copy the SceneOutput
-	postProcessingTarget->CopyFromRenderTarget(sceneOutput);
-
-	// 4) Bind Screen Quad which we can use for our rasterizer and all passes
+	// 2) Bind Screen Quad which we can use for our rasterizer and all passes
 	commandList->IASetVertexBuffers(0, 1, &screenQuad->GetVertexBufferView());
 	commandList->IASetIndexBuffer(&screenQuad->GetIndexBufferView());
 
-	// 5) Iterate over all passes and record their commands
+	// 3) Iterate over all passes and record their commands
 	for(int i = 0; i < passes.size(); i++)
 	{
 		if(passes[i]->IsEnabled)
@@ -51,7 +48,7 @@ void PostProcessor::Execute(ComPtr<ID3D12GraphicsCommandList4> commandList)
 		}
 	}
 
-	// 6) Copy end result over to the screen buffer (of this frame)
+	// 4) Copy end result over to the screen buffer (of this frame)
 	postProcessingTarget->CopyToScreenBuffer();
 }
 

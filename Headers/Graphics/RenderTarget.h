@@ -18,6 +18,7 @@ public:
 	void CopyFromScreenBuffer();
 	void CopyFromRenderTarget(RenderTarget* target);
 
+	DXGI_FORMAT GetFormat();
 	ComPtr<ID3D12Resource> GetResource();
 	D3D12_RESOURCE_STATES GetResourceState();
 	CD3DX12_CPU_DESCRIPTOR_HANDLE GetRTV();

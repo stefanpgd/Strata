@@ -27,11 +27,6 @@ void PostProcessBloom::Update(float deltaTime)
 	ImGui::DragInt("Blur Passes", &blurPasses, 0.1, 2, 12);
 	ImGui::Separator();
 	ImGui::End();
-
-	ImGui::Begin("Passes");
-	EditorRenderTargetHighlight(tresholdTarget, "Treshold", 250, 1.5);
-	EditorRenderTargetHighlight(blurTargetBack, "Blur", 250, 1.5);
-	ImGui::End();
 }
 
 void PostProcessBloom::RecordPass(ComPtr<ID3D12GraphicsCommandList4> commandList)

@@ -6,16 +6,20 @@
 // Post Processing Passes
 #include "Graphics/PostProcessPasses/PostProcessVignette.h"
 #include "Graphics/PostProcessPasses/PostProcessBloom.h"
+#include "Graphics/PostProcessPasses/PostProcessHDR.h"
 
-PostProcessingStage::PostProcessingStage()
+PostProcessingStage::PostProcessingStage(RenderTarget* sceneOutput)
 {
-	postProcessor = new PostProcessor();
+	postProcessor = new PostProcessor(sceneOutput);
 
-	PostProcessBloom* bloomPass = new PostProcessBloom();
-	PostProcessVignette* vignettePass = new PostProcessVignette();
+	PostProcessHDR* hdrPass = new PostProcessHDR();
+	postProcessor->AddPass(hdrPass);
 
-	postProcessor->AddPass(bloomPass);
-	postProcessor->AddPass(vignettePass);
+	//PostProcessBloom* bloomPass = new PostProcessBloom();
+	//PostProcessVignette* vignettePass = new PostProcessVignette();
+	//
+	//postProcessor->AddPass(bloomPass);
+	//postProcessor->AddPass(vignettePass);
 }
 
 void PostProcessingStage::Update(float deltaTime)
