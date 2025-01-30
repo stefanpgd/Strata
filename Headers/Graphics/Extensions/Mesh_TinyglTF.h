@@ -114,14 +114,16 @@ void glTFLoadIndices(std::vector<unsigned int>& indices,
 
 		if(componentSize == 2)
 		{
-			short index;
+			unsigned short index;
 			memcpy(&index, &buffer.data[bufferLocation], dataSize);
+
 			indices.push_back(index);
 		}
 		else if(componentSize == 4)
 		{
 			unsigned int index;
 			memcpy(&index, &buffer.data[bufferLocation], dataSize);
+
 			indices.push_back(index);
 		}
 	}

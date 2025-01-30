@@ -13,7 +13,6 @@ Model::Model(const std::string& filePath, bool isRayTracingGeometry) : isRayTrac
 	std::string error;
 	std::string warning;
 
-
 	std::string extension = filePath.substr(filePath.find_last_of(".") + 1);
 
 	bool result = false;
