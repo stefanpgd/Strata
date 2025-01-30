@@ -10,17 +10,19 @@
 
 #include "Graphics/Extensions/Mesh_TinyglTF.h"
 
+// TODO: Consider loading in not interleaved, due to being able to load the model data in bulk. 
+
 Mesh::Mesh(tinygltf::Model& model, tinygltf::Primitive& primitive, glm::mat4& transform, bool isRayTracingGeometry) 
 	: isRayTracingGeometry(isRayTracingGeometry)
 {
 	// Geometry Data //
 	glTFLoadVertexAttribute(vertices, "POSITION", model, primitive);
-	//glTFLoadVertexAttribute(vertices, "NORMAL", model, primitive);
-	//glTFLoadVertexAttribute(vertices, "TANGENT", model, primitive);
+	glTFLoadVertexAttribute(vertices, "NORMAL", model, primitive);
+	glTFLoadVertexAttribute(vertices, "TANGENT", model, primitive);
 	glTFLoadVertexAttribute(vertices, "TEXCOORD_0", model, primitive);
 	glTFLoadIndices(indices, model, primitive);
 
-	//GenerateTangents();
+	GenerateTangents();
 	glTFApplyNodeTransform(vertices, transform);
 
 	UploadGeometryBuffers();

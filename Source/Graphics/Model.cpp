@@ -13,7 +13,24 @@ Model::Model(const std::string& filePath, bool isRayTracingGeometry) : isRayTrac
 	std::string error;
 	std::string warning;
 
-	bool result = loader.LoadASCIIFromFile(&model, &error, &warning, filePath);
+
+	std::string extension = filePath.substr(filePath.find_last_of(".") + 1);
+
+	bool result = false;
+	if(extension == "gltf")
+	{
+		result = loader.LoadASCIIFromFile(&model, &error, &warning, filePath);
+	}
+	else if(extension == "glb")
+	{
+		result = loader.LoadBinaryFromFile(&model, &error, &warning, filePath);
+	}
+	else
+	{
+		LOG(Log::MessageType::Error, "This model is not a GLTF/GLB, loading is not supported");
+		return;
+	}
+
 	if(!warning.empty())
 	{
 		LOG(Log::MessageType::Debug, warning);

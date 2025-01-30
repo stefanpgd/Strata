@@ -14,6 +14,7 @@
 /// Goal 2 [x]: Post Processing - Vignette & Bloom(?)
 /// Goal 3 [x]: Skydome & HDRi 
 /// Goal 4 [x]: HDR to LDR
+/// Goal 5 [-]: Loading in smaller scenes like Sponza correctly
 /// 
 /// Goals to look into:
 /// - Loading in big scenes/models
@@ -21,6 +22,7 @@
 /// - Scene Serialization
 /// - Editor utilities for adding objects
 /// - Mipmapping for textures
+/// - Figure out why scene loading is so slow
 /// 
 /// Note about Bloom: I've quite a hacky version of it. But it will suffice for now. 
 /// 
@@ -49,7 +51,8 @@ StrataProject::StrataProject()
 	cube->transform.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
 
-	scene->AddModel("Assets/Models/Street/street.gltf");
+	Model* sponza = scene->AddModel("Assets/Models/Sponza/GLB/sponza.glb");
+	sponza->transform.Scale = glm::vec3(0.05f);
 
 	sceneRenderStage = new SceneRenderStage(scene);
 	postProcessingStage = new PostProcessingStage(sceneRenderStage->renderTarget);
