@@ -49,6 +49,7 @@ StrataProject::StrataProject()
 	cube->transform.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
 
+	scene->AddModel("Assets/Models/Street/street.gltf");
 
 	sceneRenderStage = new SceneRenderStage(scene);
 	postProcessingStage = new PostProcessingStage(sceneRenderStage->renderTarget);

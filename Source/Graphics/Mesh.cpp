@@ -15,12 +15,12 @@ Mesh::Mesh(tinygltf::Model& model, tinygltf::Primitive& primitive, glm::mat4& tr
 {
 	// Geometry Data //
 	glTFLoadVertexAttribute(vertices, "POSITION", model, primitive);
-	glTFLoadVertexAttribute(vertices, "NORMAL", model, primitive);
-	glTFLoadVertexAttribute(vertices, "TANGENT", model, primitive);
+	//glTFLoadVertexAttribute(vertices, "NORMAL", model, primitive);
+	//glTFLoadVertexAttribute(vertices, "TANGENT", model, primitive);
 	glTFLoadVertexAttribute(vertices, "TEXCOORD_0", model, primitive);
 	glTFLoadIndices(indices, model, primitive);
 
-	GenerateTangents();
+	//GenerateTangents();
 	glTFApplyNodeTransform(vertices, transform);
 
 	UploadGeometryBuffers();
@@ -71,28 +71,24 @@ void Mesh::UpdateMaterial()
 
 void Mesh::UploadGeometryBuffers()
 {
-	UploadVertexBuffer();
+	unsigned int vertexBufferSize = sizeof(Vertex) * vertices.size();
+	unsigned int indicesBufferSize = sizeof(unsigned int) * indices.size();
 
-	DXCommands* copyCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_COPY);
-	ComPtr<ID3D12GraphicsCommandList4> copyCommandList = copyCommands->GetGraphicsCommandList();
-	copyCommands->ResetCommandList();
+	AllocateAndMapResource(vertexBuffer, vertices.data(), vertexBufferSize);
+	AllocateAndMapResource(indexBuffer, indices.data(), indicesBufferSize );
 
-	ComPtr<ID3D12Resource> intermediateIndexBuffer;
-	UpdateBufferResource(copyCommandList, &indexBuffer, &intermediateIndexBuffer, indices.size(),
-		sizeof(unsigned int), indices.data(), D3D12_RESOURCE_FLAG_NONE);
+	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+	vertexBufferView.SizeInBytes = vertexBufferSize;
+	vertexBufferView.StrideInBytes = sizeof(Vertex);
 
 	indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
-	indexBufferView.SizeInBytes = indices.size() * sizeof(unsigned int);
+	indexBufferView.SizeInBytes = indicesBufferSize;
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
-	// 3.Execute the copying on the command queue & wait until it's done // 
-	copyCommands->ExecuteCommandList(DXAccess::GetCurrentScreenBufferIndex());
-	copyCommands->Signal();
-	copyCommands->WaitForFenceValue(DXAccess::GetCurrentScreenBufferIndex());
-
-	// 4. Clear CPU data // 
+	verticesCount = vertices.size();
 	indicesCount = indices.size();
 
+	vertices.clear();
 	indices.clear();
 }
 
@@ -119,28 +115,6 @@ void Mesh::LoadTextures(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	glTFLoadTextureByType(&Textures.Albedo, glTFTextureType::BaseColor, model, primitive);
 	// Load others if necessary //
-}
-
-void Mesh::UploadVertexBuffer()
-{
-	D3D12_HEAP_PROPERTIES uploadHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-
-	// First allocate room
-	unsigned int bufferSize = vertices.size() * sizeof(Vertex);
-	CD3DX12_RESOURCE_DESC bufferDescription = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_NONE);
-	ComPtr<ID3D12Device5> device = DXAccess::GetDevice();
-	ThrowIfFailed(device->CreateCommittedResource(&uploadHeap, D3D12_HEAP_FLAG_NONE,
-		&bufferDescription,  D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexBuffer)));
-
-	// Map data //
-	UpdateUploadHeapResource(vertexBuffer, vertices.data(), bufferSize);
-
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = vertices.size() * sizeof(Vertex);
-	vertexBufferView.StrideInBytes = sizeof(Vertex);
-
-	verticesCount = vertices.size();
-	vertices.clear();
 }
 
 void Mesh::BuildBLAS()
