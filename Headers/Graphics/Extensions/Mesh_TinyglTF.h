@@ -177,9 +177,10 @@ inline bool glTFLoadTextureByType(Texture** texture, glTFTextureType type, tinyg
 
 		if(textureIndex != -1)
 		{
-			tinygltf::Image& image = model.images[textureIndex];
+			int imageSource = model.textures[textureIndex].source;
+			tinygltf::Image& image = model.images[imageSource];
 
-			// Load or Store textures into teh TextureManager
+			// Load or Store textures into the TextureManager
 			if(TextureManager::IsStored(image.uri))
 			{
 				*texture = TextureManager::GetTexture(image.uri);
