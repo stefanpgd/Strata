@@ -49,6 +49,8 @@ private:
 	void SetupGeometryDescription();
 	void LoadTextures(tinygltf::Model& model, tinygltf::Primitive& primitive);
 
+	void UploadVertexBuffer();
+
 	void BuildBLAS();
 
 public:

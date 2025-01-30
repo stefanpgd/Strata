@@ -71,23 +71,15 @@ void Mesh::UpdateMaterial()
 
 void Mesh::UploadGeometryBuffers()
 {
+	UploadVertexBuffer();
+
 	DXCommands* copyCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_COPY);
 	ComPtr<ID3D12GraphicsCommandList4> copyCommandList = copyCommands->GetGraphicsCommandList();
 	copyCommands->ResetCommandList();
 
-	// 1. Record commands to upload vertex & index buffers //
-	ComPtr<ID3D12Resource> intermediateVertexBuffer;
-	UpdateBufferResource(copyCommandList, &vertexBuffer, &intermediateVertexBuffer, vertices.size(),
-		sizeof(Vertex), vertices.data(), D3D12_RESOURCE_FLAG_NONE);
-
 	ComPtr<ID3D12Resource> intermediateIndexBuffer;
 	UpdateBufferResource(copyCommandList, &indexBuffer, &intermediateIndexBuffer, indices.size(),
 		sizeof(unsigned int), indices.data(), D3D12_RESOURCE_FLAG_NONE);
-
-	// 2. Retrieve info about from the buffers to create Views  // 
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = vertices.size() * sizeof(Vertex);
-	vertexBufferView.StrideInBytes = sizeof(Vertex);
 
 	indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
 	indexBufferView.SizeInBytes = indices.size() * sizeof(unsigned int);
@@ -99,10 +91,8 @@ void Mesh::UploadGeometryBuffers()
 	copyCommands->WaitForFenceValue(DXAccess::GetCurrentScreenBufferIndex());
 
 	// 4. Clear CPU data // 
-	verticesCount = vertices.size();
 	indicesCount = indices.size();
 
-	vertices.clear();
 	indices.clear();
 }
 
@@ -129,6 +119,28 @@ void Mesh::LoadTextures(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	glTFLoadTextureByType(&Textures.Albedo, glTFTextureType::BaseColor, model, primitive);
 	// Load others if necessary //
+}
+
+void Mesh::UploadVertexBuffer()
+{
+	D3D12_HEAP_PROPERTIES uploadHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
+	// First allocate room
+	unsigned int bufferSize = vertices.size() * sizeof(Vertex);
+	CD3DX12_RESOURCE_DESC bufferDescription = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_NONE);
+	ComPtr<ID3D12Device5> device = DXAccess::GetDevice();
+	ThrowIfFailed(device->CreateCommittedResource(&uploadHeap, D3D12_HEAP_FLAG_NONE,
+		&bufferDescription,  D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexBuffer)));
+
+	// Map data //
+	UpdateUploadHeapResource(vertexBuffer, vertices.data(), bufferSize);
+
+	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+	vertexBufferView.SizeInBytes = vertices.size() * sizeof(Vertex);
+	vertexBufferView.StrideInBytes = sizeof(Vertex);
+
+	verticesCount = vertices.size();
+	vertices.clear();
 }
 
 void Mesh::BuildBLAS()

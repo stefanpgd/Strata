@@ -13,7 +13,7 @@
 /// Goal 1 [x]: A plane, a cube on it, and a focused camera that can pan around with dragging the mouse
 /// Goal 2 [x]: Post Processing - Vignette & Bloom(?)
 /// Goal 3 [x]: Skydome & HDRi 
-/// Goal 4 [-]: HDR to LDR
+/// Goal 4 [x]: HDR to LDR
 /// 
 /// Goals to look into:
 /// - Loading in big scenes/models
@@ -48,6 +48,7 @@ StrataProject::StrataProject()
 	Model* cube = scene->AddModel("Assets/Models/Prototype/proto_cube_01.gltf");
 	cube->transform.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	scene->AddModel("Assets/Models/GroundPlane/plane.gltf");
+
 
 	sceneRenderStage = new SceneRenderStage(scene);
 	postProcessingStage = new PostProcessingStage(sceneRenderStage->renderTarget);
