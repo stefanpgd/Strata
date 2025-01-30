@@ -21,7 +21,7 @@ float4 main(PixelIN IN) : SV_TARGET
     
     if(lum > Settings.treshold)
     {
-        output = sceneOutput;
+        output = min(sceneOutput, float3(5.0f, 5.0f, 5.0f));
     }
     
     return float4(output, 1.0f);

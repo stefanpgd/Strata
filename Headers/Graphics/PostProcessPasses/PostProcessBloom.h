@@ -26,4 +26,5 @@ private:
 
 	DXRootSignature* blendRootsignature;
 	DXPipeline* blendPipeline;
+	RenderTarget* blendTarget;
 };

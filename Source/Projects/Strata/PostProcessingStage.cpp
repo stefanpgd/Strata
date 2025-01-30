@@ -12,13 +12,13 @@ PostProcessingStage::PostProcessingStage(RenderTarget* sceneOutput)
 {
 	postProcessor = new PostProcessor(sceneOutput);
 
+	PostProcessBloom* bloomPass = new PostProcessBloom();
 	PostProcessHDR* hdrPass = new PostProcessHDR();
+	postProcessor->AddPass(bloomPass);
 	postProcessor->AddPass(hdrPass);
 
-	//PostProcessBloom* bloomPass = new PostProcessBloom();
 	//PostProcessVignette* vignettePass = new PostProcessVignette();
 	//
-	//postProcessor->AddPass(bloomPass);
 	//postProcessor->AddPass(vignettePass);
 }
 

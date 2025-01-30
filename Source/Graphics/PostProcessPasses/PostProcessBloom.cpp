@@ -13,9 +13,10 @@ PostProcessBloom::PostProcessBloom()
 	unsigned int width = DXAccess::GetWindowWidth();
 	unsigned int height = DXAccess::GetWindowHeight();
 
-	tresholdTarget = new RenderTarget(width, height);
-	blurTargetFront = new RenderTarget(width, height);
-	blurTargetBack = new RenderTarget(width, height);
+	tresholdTarget = new RenderTarget(width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	blurTargetFront = new RenderTarget(width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	blurTargetBack = new RenderTarget(width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	blendTarget = new RenderTarget(width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
 }
 
 void PostProcessBloom::Update(float deltaTime)
@@ -23,7 +24,7 @@ void PostProcessBloom::Update(float deltaTime)
 	ImGui::Begin("Post Processing");
 	ImGui::SeparatorText("Bloom");
 	ImGui::Checkbox("Bloom Enabled", &IsEnabled);
-	ImGui::DragFloat("Bloom Treshold", &bloomTreshold, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("Bloom Treshold", &bloomTreshold, 0.01f, 0.0f, 3.0f);
 	ImGui::DragInt("Blur Passes", &blurPasses, 0.1, 2, 12);
 	ImGui::Separator();
 	ImGui::End();
@@ -34,6 +35,8 @@ void PostProcessBloom::RecordPass(ComPtr<ID3D12GraphicsCommandList4> commandList
 	// 1) Threshold Pass
 	tresholdTarget->Bind();
 	tresholdTarget->Clear();
+
+	sceneOutput->PrepareAsShaderResource();
 
 	commandList->SetGraphicsRootSignature(tresholdRootsignature->GetAddress());
 	commandList->SetPipelineState(tresholdPipeline->GetAddress());
@@ -82,10 +85,9 @@ void PostProcessBloom::RecordPass(ComPtr<ID3D12GraphicsCommandList4> commandList
 		commandList->DrawIndexedInstanced(screenQuad->GetIndicesCount(), 1, 0, 0, 0);
 	}
 
-	postProcessTarget->CopyFromRenderTarget(blurTargetBack);
-
 	// 3) Blend pass 
-	postProcessTarget->Bind();
+	blendTarget->Bind();
+	blendTarget->Clear();
 	lastBlurTarget->PrepareAsShaderResource();
 
 	commandList->SetGraphicsRootSignature(blendRootsignature->GetAddress());
@@ -94,6 +96,7 @@ void PostProcessBloom::RecordPass(ComPtr<ID3D12GraphicsCommandList4> commandList
 	commandList->SetGraphicsRootDescriptorTable(0, sceneOutput->GetSRV());
 	commandList->SetGraphicsRootDescriptorTable(1, lastBlurTarget->GetSRV());
 	commandList->DrawIndexedInstanced(screenQuad->GetIndicesCount(), 1, 0, 0, 0);
+	sceneOutput->CopyFromRenderTarget(blendTarget);
 }
 
 void PostProcessBloom::InitializePipelines()
@@ -112,6 +115,7 @@ void PostProcessBloom::InitializePipelines()
 	tresholdDescription.RootSignature = tresholdRootsignature;
 	tresholdDescription.VertexPath = "Source/Shaders/postprocess_screen.vertex.hlsl";
 	tresholdDescription.PixelPath = "Source/Shaders/postprocess_bloomtreshold.pixel.hlsl";
+	tresholdDescription.RenderTargetFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 	tresholdPipeline = new DXPipeline(tresholdDescription);
 
@@ -129,6 +133,7 @@ void PostProcessBloom::InitializePipelines()
 	blurDescription.RootSignature = blurRootsignature;
 	blurDescription.VertexPath = "Source/Shaders/postprocess_screen.vertex.hlsl";
 	blurDescription.PixelPath = "Source/Shaders/postprocess_bloomblur.pixel.hlsl";
+	blurDescription.RenderTargetFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 	blurPipeline = new DXPipeline(blurDescription);
 
@@ -143,6 +148,7 @@ void PostProcessBloom::InitializePipelines()
 	blendDescription.RootSignature = blendRootsignature;
 	blendDescription.VertexPath = "Source/Shaders/postprocess_screen.vertex.hlsl";
 	blendDescription.PixelPath = "Source/Shaders/postprocess_bloomblend.pixel.hlsl";
+	blendDescription.RenderTargetFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 	blendPipeline = new DXPipeline(blendDescription);
 }
