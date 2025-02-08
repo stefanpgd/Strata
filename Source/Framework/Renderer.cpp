@@ -10,11 +10,14 @@
 // Renderer Components //
 #include "Graphics/Window.h"
 #include "Graphics/Texture.h"
+#include "Graphics/TextureManager.h"
 
 #include <cassert>
 #include <imgui.h>
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
+
+// TODO: Move default texture to TextureManager
 
 namespace RendererInternal
 {
@@ -49,6 +52,8 @@ Renderer::Renderer(const std::wstring& applicationName, unsigned int windowWidth
 	window = new Window(applicationName, windowWidth, windowHeight);
 
 	InitializeImGui();
+
+	TextureManager::Intialize();
 }
 
 // What should Render be?
