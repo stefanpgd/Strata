@@ -11,11 +11,15 @@ class Texture;
 class TextureManager
 {
 public:
+	static void Intialize();
+
 	static void AddTexture(const std::string& path, Texture* texture);
 	static Texture* LoadTexture(const std::string& path);
 	static Texture* GetTexture(const std::string& path);
 	static bool IsStored(const std::string& path);
+	static Texture* GetErrorTexture();
 
 private:
 	static std::unordered_map<std::string, Texture*> textureAssets;
+	static Texture* errorTexture;
 };
