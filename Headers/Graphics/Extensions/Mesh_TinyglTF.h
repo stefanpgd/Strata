@@ -5,6 +5,7 @@
 #include <vector>
 #include "Graphics/Mesh.h"
 #include "Graphics/Texture.h"
+#include "Graphics/DXVertexBuffer.h"
 #include "Graphics/TextureManager.h"
 #include "Utilities/Logger.h"
 
@@ -13,14 +14,14 @@ enum glTFTextureType
 	BaseColor,
 	Normal,
 	MetallicRoughness,
-	Occlusion, 
+	Occlusion,
 };
 
 /// <summary>
 /// Able to load in a specific 'Attribute' defined by glTF. For example with 'POSITION' all
 /// position data can be loaded into a given buffer of vertices. 
 /// </summary>
-inline void glTFLoadVertexAttribute(std::vector<Vertex>& vertices, const std::string& attributeType, 
+inline void glTFLoadVertexAttributeToVector(std::vector<Vertex>& vertices, const std::string& attributeType,
 	tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	auto attribute = primitive.attributes.find(attributeType);
@@ -91,6 +92,65 @@ inline void glTFLoadVertexAttribute(std::vector<Vertex>& vertices, const std::st
 		{
 			memcpy(&vertex.TextureCoord0, &buffer.data[bufferLocation], dataSize);
 		}
+	}
+}
+
+/// <summary>
+/// Able to load in a specific 'Attribute' defined by glTF. For example with 'POSITION' all
+/// position data can be loaded into a given buffer of vertices. 
+/// </summary>
+inline void glTFLoadVertexAttributeToBuffer(DXVertexBuffer* vertexBuffer, const std::string& attributeType,
+	tinygltf::Model& model, tinygltf::Primitive& primitive)
+{
+	auto attribute = primitive.attributes.find(attributeType);
+
+	// Check if within the primitives's attributes the type is present. For example 'Normals'
+	// If not, return here, since there is no data to load in. 
+	if(attribute == primitive.attributes.end())
+	{
+		std::string message = "Attribute Type: '" + attributeType + "' missing from this mesh.";
+		LOG(Log::MessageType::Debug, message);
+		return;
+	}
+
+	// Accessor: Tells use which view we need, what type of data is in it, and the amount/count of data.
+	// BufferView: Tells which buffer we need, and where we need to be in the buffer
+	// Buffer: Binary data of our mesh
+	tinygltf::Accessor& accessor = model.accessors[primitive.attributes.at(attributeType)];
+	tinygltf::BufferView& view = model.bufferViews[accessor.bufferView];
+	tinygltf::Buffer& buffer = model.buffers[view.buffer];
+
+	// Component: default type like float, int
+	// Type: a structure made out of components, e.g VEC2 ( 2x float )
+	unsigned int componentSize = tinygltf::GetComponentSizeInBytes(accessor.componentType);
+	unsigned int objectSize = tinygltf::GetNumComponentsInType(accessor.type);
+	unsigned int dataSize = componentSize * objectSize;
+	unsigned int stride = accessor.ByteStride(view);
+
+	// Accessor byteoffset: Offset to first element of type
+	// BufferView byteoffset: Offset to get to this primitives buffer data in the overall buffer
+	unsigned int bufferStart = accessor.byteOffset + view.byteOffset;
+
+	// Stride: Distance in buffer till next element occurs
+
+	void* bufferMemoryLocation = &buffer.data[bufferStart]; 
+
+	// TODO: Could be an option to just grab the pointer and pass an offset, saving the if-else..
+	if(attributeType == "POSITION")
+	{
+		vertexBuffer->MapToBuffer(&buffer.data[bufferStart], stride, VertexBufferLayoutIDs::POSITION);
+	}
+	else if(attributeType == "NORMAL")
+	{
+		vertexBuffer->MapToBuffer(&buffer.data[bufferStart], stride, VertexBufferLayoutIDs::NORMAL);
+	}
+	else if(attributeType == "TANGENT")
+	{
+		// TODO: Due to tangent being sometimes 3 or 4 bytes.. we have to figure out some things..
+	}
+	else if(attributeType == "TEXCOORD_0")
+	{
+		vertexBuffer->MapToBuffer(&buffer.data[bufferStart], stride, VertexBufferLayoutIDs::TEXCOORD0);
 	}
 }
 
@@ -204,4 +264,22 @@ inline bool glTFLoadTextureByType(Texture** texture, glTFTextureType type, tinyg
 	// TODO: replace hardcoded path with Texture Database 'default'
 	*texture = new Texture("Assets/Textures/missing.png");
 	return false;
+}
+
+inline unsigned int glTFGetVerticesCount(tinygltf::Model& model, tinygltf::Primitive& primitive)
+{
+	const std::string attributeType = "POSITION";
+	auto attribute = primitive.attributes.find(attributeType);
+
+	// Check if within the primitives's attributes the type is present. For example 'Normals'
+	// If not, return here, since there is no data to load in. 
+	if(attribute == primitive.attributes.end())
+	{
+		std::string message = "Attribute Type: '" + attributeType + "' missing from this mesh.";
+		LOG(Log::MessageType::Error, message);
+		return 0;
+	}
+
+	// Accessor: Tells use which view we need, what type of data is in it, and the amount/count of data.
+	return model.accessors[primitive.attributes.at(attributeType)].count;
 }

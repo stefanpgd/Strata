@@ -16,6 +16,7 @@ struct DXPipelineDescription
 	bool UsePixelShader = true;
 	bool DoAlphaBlending = false;
 	bool DoBackCulling = false;
+	bool UsePackedVertexLayout = false;
 };
 
 class DXPipeline

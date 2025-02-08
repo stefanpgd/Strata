@@ -21,6 +21,15 @@ struct Vertex
 	glm::vec2 TextureCoord0;
 };
 
+enum VertexBufferLayoutIDs
+{
+	POSITION, 
+	NORMAL,
+	TANGENT,
+	TEXCOORD0,
+	ALL_ID_COUNT 
+};
+
 class Mesh
 {
 public:
@@ -32,7 +41,7 @@ public:
 
 	void UpdateMaterial();
 
-	const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView();
+	const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView(VertexBufferLayoutIDs id = VertexBufferLayoutIDs::POSITION);
 	const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView();
 	const unsigned int GetIndicesCount();
 
