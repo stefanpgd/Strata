@@ -11,6 +11,7 @@
 
 class Texture;
 class DXBuffer;
+class DXVertexBuffer;
 
 struct Vertex
 {
@@ -57,9 +58,7 @@ public:
 	PBRTextureSet Textures;
 
 private:
-	// Vertex & Index Data //
-	ComPtr<ID3D12Resource> vertexBuffer;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+	DXVertexBuffer* vertexBuffer;
 
 	ComPtr<ID3D12Resource> indexBuffer;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;

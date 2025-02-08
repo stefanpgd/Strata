@@ -16,6 +16,7 @@ SamplerState LinearSampler : register(s0);
 float4 main(PixelIN IN) : SV_TARGET
 {
     float3 color = hdrSceneTexture.Sample(LinearSampler, IN.TexCoord0).rgb;
+    color = pow(max(color, 0.0), 2.24); // might have to move to scene fragment shader
     
     float3 mapped = float3(1.0, 1.0, 1.0) - exp(-color * Settings.exposure);
     

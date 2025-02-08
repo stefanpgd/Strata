@@ -89,6 +89,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\tinyexr\tinyexr.cpp" />
+    <ClCompile Include="Source\Graphics\DXVertexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessPasses\PostProcessHDR.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessPasses\PostProcessBloom.cpp" />
     <ClCompile Include="Source\Graphics\PostProcessPass.cpp" />
@@ -133,6 +134,7 @@
     <ClCompile Include="Source\Projects\Strata\StrataProject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\Graphics\DXVertexBuffer.h" />
     <ClInclude Include="Headers\Graphics\DXBuffer.h" />
     <ClInclude Include="Headers\Graphics\Camera.h" />
     <ClInclude Include="Headers\Framework\Scene.h" />

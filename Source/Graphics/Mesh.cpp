@@ -6,6 +6,7 @@
 #include "Graphics/DXBuffer.h"
 #include "Graphics/DXCommands.h"
 #include "Framework/Mathematics.h"
+#include "Graphics/DXVertexBuffer.h"
 #include <cassert>
 
 #include "Graphics/Extensions/Mesh_TinyglTF.h"
@@ -22,8 +23,12 @@ Mesh::Mesh(tinygltf::Model& model, tinygltf::Primitive& primitive, glm::mat4& tr
 	glTFLoadVertexAttribute(vertices, "TEXCOORD_0", model, primitive);
 	glTFLoadIndices(indices, model, primitive);
 
+
 	GenerateTangents();
 	glTFApplyNodeTransform(vertices, transform);
+
+	vertexBuffer = new DXVertexBuffer(vertices.size(), false);
+	vertexBuffer->MapToBuffer(vertices.data(), sizeof(Vertex));
 
 	UploadGeometryBuffers();
 
@@ -57,6 +62,8 @@ Mesh::Mesh(Vertex* verts, unsigned int vertexCount, unsigned int* indi,
 		indices.push_back(indi[i]);
 	}
 
+	vertexBuffer = new DXVertexBuffer(vertices.size(), false);
+	vertexBuffer->MapToBuffer(vertices.data(), sizeof(Vertex));
 	UploadGeometryBuffers();
 
 	if(isRayTracingGeometry)
@@ -73,15 +80,8 @@ void Mesh::UpdateMaterial()
 
 void Mesh::UploadGeometryBuffers()
 {
-	unsigned int vertexBufferSize = sizeof(Vertex) * vertices.size();
 	unsigned int indicesBufferSize = sizeof(unsigned int) * indices.size();
-
-	AllocateAndMapResource(vertexBuffer, vertices.data(), vertexBufferSize);
-	AllocateAndMapResource(indexBuffer, indices.data(), indicesBufferSize );
-
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = vertexBufferSize;
-	vertexBufferView.StrideInBytes = sizeof(Vertex);
+	AllocateAndMapResource(indexBuffer, indices.data(), indicesBufferSize);
 
 	indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
 	indexBufferView.SizeInBytes = indicesBufferSize;
@@ -96,21 +96,23 @@ void Mesh::UploadGeometryBuffers()
 
 void Mesh::SetupGeometryDescription()
 {
-	ComPtr<ID3D12Device5> device = DXAccess::GetDevice();
-	geometryDescription.Flags = D3D12_RAYTRACING_GEOMETRY_FLAG_OPAQUE;
-	geometryDescription.Type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
-	geometryDescription.Triangles.Transform3x4 = 0;
+	// TODO: Update Ray Tracing Geometry to be supported again...
 
-	// Vertex Buffer //
-	geometryDescription.Triangles.VertexBuffer.StartAddress = vertexBuffer->GetGPUVirtualAddress();
-	geometryDescription.Triangles.VertexBuffer.StrideInBytes = sizeof(Vertex);
-	geometryDescription.Triangles.VertexFormat = DXGI_FORMAT_R32G32B32_FLOAT;
-	geometryDescription.Triangles.VertexCount = verticesCount;
-
-	// Index Buffer //
-	geometryDescription.Triangles.IndexBuffer = indexBuffer->GetGPUVirtualAddress();
-	geometryDescription.Triangles.IndexFormat = DXGI_FORMAT_R32_UINT;
-	geometryDescription.Triangles.IndexCount = indicesCount;
+	//ComPtr<ID3D12Device5> device = DXAccess::GetDevice();
+	//geometryDescription.Flags = D3D12_RAYTRACING_GEOMETRY_FLAG_OPAQUE;
+	//geometryDescription.Type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
+	//geometryDescription.Triangles.Transform3x4 = 0;
+	//
+	//// Vertex Buffer //
+	//geometryDescription.Triangles.VertexBuffer.StartAddress = vertexBuffer->GetGPUVirtualAddress();
+	//geometryDescription.Triangles.VertexBuffer.StrideInBytes = sizeof(Vertex);
+	//geometryDescription.Triangles.VertexFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+	//geometryDescription.Triangles.VertexCount = verticesCount;
+	//
+	//// Index Buffer //
+	//geometryDescription.Triangles.IndexBuffer = indexBuffer->GetGPUVirtualAddress();
+	//geometryDescription.Triangles.IndexFormat = DXGI_FORMAT_R32_UINT;
+	//geometryDescription.Triangles.IndexCount = indicesCount;
 }
 
 void Mesh::LoadTextures(tinygltf::Model& model, tinygltf::Primitive& primitive)
@@ -179,7 +181,7 @@ void Mesh::GenerateTangents()
 #pragma region Getters
 const D3D12_VERTEX_BUFFER_VIEW& Mesh::GetVertexBufferView()
 {
-	return vertexBufferView;
+	return vertexBuffer->GetVertexBufferView();
 }
 
 const D3D12_INDEX_BUFFER_VIEW& Mesh::GetIndexBufferView()
@@ -194,7 +196,7 @@ const unsigned int Mesh::GetIndicesCount()
 
 ID3D12Resource* Mesh::GetVertexBuffer()
 {
-	return vertexBuffer.Get();
+	return vertexBuffer->GetResource();
 }
 
 ID3D12Resource* Mesh::GetIndexBuffer()

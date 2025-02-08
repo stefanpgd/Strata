@@ -12,12 +12,14 @@ float4 main(PixelIN IN) : SV_TARGET
 {
     float4 albedo = Diffuse.Sample(LinearSampler, IN.TexCoord0);
     
+    float3 lightDir = normalize(float3(0.1, -1.0f, 0.5f));
+    float diff = saturate(dot(IN.Normal, -lightDir));
+    diff = max(diff, 0.25f);
+    
     if(albedo.a < 0.5)
     {
         discard;
     }
     
-    albedo = pow(max(albedo, 0.0), 2.24); // might have to move to scene fragment shader
-    
-    return float4(albedo.rgb, 1.0f);
+    return float4(albedo.rgb * diff, 1.0f);
 }
