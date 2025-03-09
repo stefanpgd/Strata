@@ -43,7 +43,7 @@ private:
 
 	float scrollVelocity = 0.0f;
 	float minimumZoomSpacing = 1.5f;
-	float zoomSpeed = 16.0f;
+	float zoomSpeed = 4.0f;
 	float scrollDistance = 2.0f;
 
 	float panSpeed = 4.0f;

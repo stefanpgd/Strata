@@ -182,9 +182,6 @@ inline bool glTFLoadTextureByType(Texture** texture, glTFTextureType type, tinyg
 			int imageSource = model.textures[textureIndex].source;
 			tinygltf::Image& image = model.images[imageSource];
 
-			// TODO: In case uri = '', we intead should generate a prefix string,
-			// for example: sponza.gltf_TextureID_uri
-
 			// Load or Store textures into the TextureManager
 			if(TextureManager::IsStored(image.uri) && image.uri != "")
 			{
