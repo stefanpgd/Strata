@@ -47,10 +47,7 @@ void SceneRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandLis
 		{
 			commandList->SetGraphicsRootDescriptorTable(1, mesh->Textures.Albedo->GetSRV());
 
-			commandList->IASetVertexBuffers(0, 1, &mesh->GetVertexBufferView(VertexBufferLayoutIDs::POSITION));
-			commandList->IASetVertexBuffers(1, 1, &mesh->GetVertexBufferView(VertexBufferLayoutIDs::NORMAL));
-			commandList->IASetVertexBuffers(3, 1, &mesh->GetVertexBufferView(VertexBufferLayoutIDs::TEXCOORD0));
-
+			commandList->IASetVertexBuffers(0, 1, &mesh->GetVertexBufferView());
 			commandList->IASetIndexBuffer(&mesh->GetIndexBufferView());
 			commandList->DrawIndexedInstanced(mesh->GetIndicesCount(), 1, 0, 0, 0);
 		}
@@ -75,7 +72,6 @@ void SceneRenderStage::InitializePipeline()
 	pipelineDescription.VertexPath = "Source/Shaders/simpleRasterizer.vertex.hlsl";
 	pipelineDescription.PixelPath = "Source/Shaders/simpleRasterizer.pixel.hlsl";
 	pipelineDescription.RenderTargetFormat = renderTarget->GetFormat();
-	pipelineDescription.UsePackedVertexLayout = true;
 
 	renderPipeline = new DXPipeline(pipelineDescription);
 }

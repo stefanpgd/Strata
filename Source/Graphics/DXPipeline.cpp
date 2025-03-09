@@ -62,18 +62,11 @@ void DXPipeline::CreatePipelineState()
 {
 	// Input Layout //
 	// input layouts describe to the Input Assembler what the layout of the vertex buffer is
-	D3D12_INPUT_ELEMENT_DESC interleavedLayout[] = {
+	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
-	};
-
-	D3D12_INPUT_ELEMENT_DESC packedLayout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 2, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 3, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
 	};
 
 	// Any object in the StateStream is considered a 'Token'
@@ -118,15 +111,7 @@ void DXPipeline::CreatePipelineState()
 	blendDesc.RenderTarget[0] = rtBlendDesc;
 
 	PSS.RootSignature = description.RootSignature->GetAddress();
-	if(description.UsePackedVertexLayout)
-	{
-		PSS.InputLayout = { packedLayout, _countof(packedLayout) };
-	}
-	else
-	{
-		PSS.InputLayout = { interleavedLayout, _countof(interleavedLayout) };
-	}
-
+	PSS.InputLayout = { inputLayout, _countof(inputLayout) };
 	PSS.Rasterizer = rasterizerDesc;
 	PSS.Blending = blendDesc;
 	PSS.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;

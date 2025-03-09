@@ -12,23 +12,23 @@
 #include "Graphics/Extensions/Mesh_TinyglTF.h"
 
 // TODO: Consider loading in not interleaved, due to being able to load the model data in bulk. 
-// TODO: Support tangents again
 
 Mesh::Mesh(tinygltf::Model& model, tinygltf::Primitive& primitive, glm::mat4& transform, bool isRayTracingGeometry) 
 	: isRayTracingGeometry(isRayTracingGeometry)
 {
-	verticesCount = glTFGetVerticesCount(model, primitive);
-	vertexBuffer = new DXVertexBuffer(verticesCount, true);
-
 	// Geometry Data //
-	glTFLoadVertexAttributeToBuffer(vertexBuffer, "POSITION", model, primitive);
-	glTFLoadVertexAttributeToBuffer(vertexBuffer, "NORMAL", model, primitive);
-	glTFLoadVertexAttributeToBuffer(vertexBuffer, "TANGENT", model, primitive);
-	glTFLoadVertexAttributeToBuffer(vertexBuffer, "TEXCOORD_0", model, primitive);
+	glTFLoadVertexAttribute(vertices, "POSITION", model, primitive);
+	glTFLoadVertexAttribute(vertices, "NORMAL", model, primitive);
+	glTFLoadVertexAttribute(vertices, "TANGENT", model, primitive);
+	glTFLoadVertexAttribute(vertices, "TEXCOORD_0", model, primitive);
 	glTFLoadIndices(indices, model, primitive);
 
-	//GenerateTangents();
+
+	GenerateTangents();
 	glTFApplyNodeTransform(vertices, transform);
+
+	vertexBuffer = new DXVertexBuffer(vertices.size(), false);
+	vertexBuffer->MapToBuffer(vertices.data(), sizeof(Vertex));
 
 	UploadGeometryBuffers();
 
@@ -87,6 +87,7 @@ void Mesh::UploadGeometryBuffers()
 	indexBufferView.SizeInBytes = indicesBufferSize;
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
+	verticesCount = vertices.size();
 	indicesCount = indices.size();
 
 	vertices.clear();
@@ -178,9 +179,9 @@ void Mesh::GenerateTangents()
 #pragma endregion
 
 #pragma region Getters
-const D3D12_VERTEX_BUFFER_VIEW& Mesh::GetVertexBufferView(VertexBufferLayoutIDs id)
+const D3D12_VERTEX_BUFFER_VIEW& Mesh::GetVertexBufferView()
 {
-	return vertexBuffer->GetVertexBufferView(id);
+	return vertexBuffer->GetVertexBufferView();
 }
 
 const D3D12_INDEX_BUFFER_VIEW& Mesh::GetIndexBufferView()

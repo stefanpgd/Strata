@@ -5,7 +5,14 @@
 
 // This correspond with the Input Assembler for DXPipeline.
 // When the VertexBuffer is Interleaved, the POSITION id will be used
-
+enum VertexBufferLayoutIDs
+{
+	POSITION, 
+	NORMAL,
+	TANGENT,
+	TEXCOORD0,
+	ALL_ID_COUNT 
+};
 
 class DXVertexBuffer
 {
